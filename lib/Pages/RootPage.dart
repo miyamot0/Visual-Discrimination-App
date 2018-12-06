@@ -17,6 +17,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.notDetermined;
+  String uid;
 
   @override
   void didChangeDependencies() {
@@ -24,8 +25,8 @@ class _RootPageState extends State<RootPage> {
     var auth = AuthProvider.of(context).auth;
     auth.currentUser().then((userId) {
       setState(() {
-        authStatus =
-            userId == null ? AuthStatus.notSignedIn : AuthStatus.signedIn;
+        authStatus = userId == null ? AuthStatus.notSignedIn : AuthStatus.signedIn;
+        uid = userId == null ? null : userId;
       });
     });
   }
@@ -54,6 +55,7 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.signedIn:
         return HomePage(
           onSignedOut: _signedOut,
+          uid: uid
         );
     }
     return null;

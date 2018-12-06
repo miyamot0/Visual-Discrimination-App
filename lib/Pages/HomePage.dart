@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({this.onSignedOut});
+  HomePage({
+    this.onSignedOut, 
+    this.uid
+  });
+
   final VoidCallback onSignedOut;
+  final String uid;
 
   void _signOut(BuildContext context) async {
     try {
@@ -28,8 +34,21 @@ class HomePage extends StatelessWidget {
           ],
         ),
         body: Container(
-          child: Center(
-              child: Text('Welcome', style: TextStyle(fontSize: 32.0))),
+          child: StreamBuilder(
+            stream: Firestore.instance.collection('storage/$uid/data').snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) return new Text('Loading...');
+
+              return new ListView(
+                children: snapshot.data.documents.map((document) {
+                  return new ListTile(
+                    title: new Text(document['title']),
+                    subtitle: new Text(document['type']),
+                  );
+                }).toList(),
+              );
+            },
+          ),
         ));
   }
 }
