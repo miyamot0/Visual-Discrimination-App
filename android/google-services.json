@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "313567895439",
+    "firebase_url": "https://visual-discrimination-app.firebaseio.com",
+    "project_id": "visual-discrimination-app",
+    "storage_bucket": "visual-discrimination-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313567895439:android:c78adcd30cf33c26",
+        "android_client_info": {
+          "package_name": "com.smallnstats.visualdiscriminationapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313567895439-a8glboi7qoem1aidp6rd1his063lgtta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-6N-FyedXitEv1kFeLfSR7Ma6B9Rz3kc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
