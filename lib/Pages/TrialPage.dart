@@ -24,24 +24,22 @@
 
 import 'package:flutter/material.dart';
 
-import 'Auth/Auth.dart';
-import 'Auth/AuthProvider.dart';
-import 'Pages/RootPage.dart';
+import '../Controls/TwoPanelSelectField.dart';
 
-void main() => runApp(MyApp());
+class TrialPage extends StatelessWidget {
+  final double difficultyLevel;
+  final int trialCount;
+  final double presentationLength;
 
-class MyApp extends StatelessWidget {
+  TrialPage(this.difficultyLevel, this.trialCount, this.presentationLength);
+
   @override
-  Widget build(BuildContext context) {
-    return AuthProvider(
-      auth: Auth(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter login demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: RootPage(),
+  Widget build (BuildContext ctxt) {
+    return new Scaffold(
+      body: TwoPanelSelectField(
+        discriminabilityDifficulty: difficultyLevel,
+        trialNumber: trialCount,
+        presentationLength: presentationLength,
       ),
     );
   }
