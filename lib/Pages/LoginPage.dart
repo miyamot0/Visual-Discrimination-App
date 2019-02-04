@@ -79,18 +79,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter login demo'),
-        ),
-        body: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: buildInputs() + buildSubmitButtons(),
-              ),
-            )));
+      appBar: AppBar(
+        title: Text('Discriminability App Login'),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: buildInputs() + buildSubmitButtons(),
+          ),
+        )
+      )
+    );
   }
 
   List<Widget> buildInputs() {
@@ -119,11 +121,14 @@ class _LoginPageState extends State<LoginPage> {
           child: Text('Login', style: TextStyle(fontSize: 20.0)),
           onPressed: validateAndSubmit,
         ),
+        /*
+        Stubbed for now
         FlatButton(
           child: Text('Create an account',
               style: TextStyle(fontSize: 20.0)),
           onPressed: moveToRegister,
         ),
+        */
       ];
     } else {
       return [
