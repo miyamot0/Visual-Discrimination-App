@@ -117,6 +117,8 @@ class HomePage extends StatelessWidget {
                             trialCount: (document['trialNumbers'] as num).toDouble(),
                             difficultyValue: (document['difficultyLevel'] as num).toDouble(),
                             displaySeconds: (document['displayTime'] as num).toDouble(),
+                            participantTag: document['participantTag'].toString(),
+                            descriptionTag: document['descriptionTag'].toString(),
                           ),
                         ),
                       ),

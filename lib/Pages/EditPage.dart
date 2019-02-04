@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class EditPage extends StatefulWidget {
   final String uid;
   final String documentId;
+  final String participantTag;
+  final String descriptionTag;
   final double difficultyValue;
   final double trialCount;
   final double displaySeconds;
@@ -11,6 +13,8 @@ class EditPage extends StatefulWidget {
   EditPage({
     this.uid,
     this.documentId,
+    this.participantTag,
+    this.descriptionTag,
     this.difficultyValue,
     this.trialCount,
     this.displaySeconds,
@@ -21,6 +25,7 @@ class EditPage extends StatefulWidget {
     difficultyValue,
     trialCount,
     displaySeconds,
+    descriptionTag,
   );
 }
 
@@ -28,31 +33,40 @@ class EditPageState extends State<EditPage> {
   double difficultyValue;
   double trialCount;
   double displaySeconds;
+  String descTag;
 
   final key = new GlobalKey<ScaffoldState>();
+  final textEditController = TextEditingController();
+  final textStyle = TextStyle(
+    fontFamily: "Roboto",
+    fontSize: 20.0,
+  );
 
   EditPageState(
     this.difficultyValue,
     this.trialCount,
-    this.displaySeconds
+    this.displaySeconds,
+    this.descTag,
   );
 
   updateStateRemotely() async {
-
     try {
       await Firestore.instance.collection('storage/${widget.uid}/participants').document(widget.documentId).setData(
         {
           'trialNumbers' : trialCount,
           'difficultyLevel' : difficultyValue,
           'displayTime' : displaySeconds,
+          'descriptionTag' : textEditController.text,
         },
         merge: true,
-      ).then(showToastSuccess);
+      );
+      //.then(showToastSuccess);
     } catch (e) {
       showToastFailed(null);
     }
   }
 
+  // Stubbed for now
   showToastSuccess(state) {
     key.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
     key.currentState.showSnackBar(
@@ -82,14 +96,30 @@ class EditPageState extends State<EditPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    textEditController.text = descTag;
+    textEditController.addListener(updateStateRemotely);
+  }
+
+  @override
+  void dispose() {
+    textEditController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
       key: key,
       appBar: new AppBar(
-        title: new Text("Discrimination Trial Task"),
+        title: new Text(
+          "Participant: ${widget.participantTag}"
+        ),
       ),
       body: Align(
-        alignment: Alignment.center,        
+        alignment: Alignment.center,
         child: Padding(
           padding: EdgeInsets.only(
             top: 10.0,
@@ -106,16 +136,18 @@ class EditPageState extends State<EditPage> {
                   bottom: 50.0,
                 ),
                 child: Text(
-                  "To begin the visual discrimination task, select the number of trials desired and the level of difficulty. The levels of difficulty represent the distance from equal difference between each of the stimuli (i.e., equal similarity)"
+                  "To begin the visual discrimination task, select the number of trials desired and the level of difficulty. The levels of difficulty represent the distance from equal difference between each of the stimuli (i.e., equal similarity)",
+                  style: textStyle,
                 ),
               ),
               Text(
-                "Select Number of Trials"
+                "Select Number of Trials",
+                style: textStyle,
               ),
               Slider(
                 value: trialCount,
                 min: 1.0,
-                max: 10.0,              
+                max: 10.0,
                 divisions: 9,
                 label: 'Run $trialCount Trials',
                 onChanged: (double value) {
@@ -131,7 +163,8 @@ class EditPageState extends State<EditPage> {
                   top: 10.0,
                 ),
                 child: Text(
-                  "Select Level of Difficulty"
+                  "Select Level of Difficulty",
+                  style: textStyle,
                 ),
               ),
               Slider(
@@ -153,7 +186,8 @@ class EditPageState extends State<EditPage> {
                   top: 10.0,
                 ),
                 child: Text(
-                  "Select Display Times"
+                  "Select Display Times",
+                  style: textStyle,
                 ),
               ),
               Slider(
@@ -170,6 +204,19 @@ class EditPageState extends State<EditPage> {
                   });
                 },
               ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      "Participant Comments",
+                      style: textStyle,
+                    ),
+                    TextField(
+                      controller: textEditController,
+                    )
+                  ]
+                ),
+              )
             ],
           ),
         ),
