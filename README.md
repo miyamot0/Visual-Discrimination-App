@@ -19,6 +19,12 @@ This project is a derivative work of an earlier project and uses licensed softwa
 - firebase_auth - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 - cloud_firestore - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 
+## Assets
+
+This project uses open assets to support its functionality:
+
+- [Short Success Sound Glockenspiel Treasure Video Game.mp3](https://freesound.org/people/FunWithSound/sounds/456965/) - CC0 - Copyright 2019 FunWithSound
+
 ## Installation
 
 This application can be installed as either an Android or iOS application.  

@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: "^0.1.2"
   firebase_auth: "^0.5.20"
   cloud_firestore: "^0.8.2"
+  audioplayers: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +20,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/short-success-sound-glockenspiel-treasure-video-game.mp3

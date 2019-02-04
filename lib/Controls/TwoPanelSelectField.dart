@@ -22,6 +22,7 @@
     THE SOFTWARE.
 */
 
+import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -54,6 +55,9 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
   static const double padding = 50.0;
   static double iconWidth = 100.0;
 
+  static AudioCache player = new AudioCache();
+  static const audioPath = "short-success-sound-glockenspiel-treasure-video-game.mp3";
+
   bool locationRandomizer = Random().nextInt(100) % 2 == 0;
 
   static final List<Color> possibleColors = [Colors.white, Colors.black];
@@ -75,6 +79,8 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
 
     if (output) {
       nCorrect++;
+
+      player.play(audioPath);
     } else {
       nIncorrect++;
     }
