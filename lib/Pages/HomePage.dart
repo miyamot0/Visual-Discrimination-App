@@ -71,19 +71,13 @@ class HomePage extends StatelessWidget {
                     horizontal: 20.0, 
                     vertical: 10.0
                   ),
-                  leading: Container(
-                    padding: EdgeInsets.only(
-                      right: 12.0
+                  leading: GestureDetector(
+                    child: Icon(
+                      Icons.play_arrow,
+                      size: 30.0,
                     ),
-                    decoration: new BoxDecoration(
-                      border: new Border(
-                        right: new BorderSide(
-                          width: 1.0, 
-                          color: Colors.white24
-                        )
-                      )
-                    ),
-                    child: Icon(Icons.person),
+                    onTap: () => print('fired')
+                    ,
                   ),
                   title: new Text(document['participantTag'],
                     style: TextStyle(
