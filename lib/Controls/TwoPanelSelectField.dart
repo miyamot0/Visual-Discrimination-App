@@ -22,10 +22,13 @@
     THE SOFTWARE.
 */
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
 class TwoPanelSelectField extends StatefulWidget {
+  final String uid;
+  final String documentId;
   final double discriminabilityDifficulty;
   final int trialNumber;
   final double presentationLength;
@@ -33,6 +36,8 @@ class TwoPanelSelectField extends StatefulWidget {
   const TwoPanelSelectField(
   {
     Key key,
+    @required this.uid,
+    @required this.documentId,
     @required this.discriminabilityDifficulty,
     @required this.trialNumber,
     @required this.presentationLength,
@@ -62,8 +67,17 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
   double opacityReferent = 1.0;
   double opacitySelection = 0.0;
 
+  int nCorrect = 0;
+  int nIncorrect = 0;
+
   void onSelected(bool output) async {
     currentTrial = currentTrial + 1;
+
+    if (output) {
+      nCorrect++;
+    } else {
+      nIncorrect++;
+    }
 
     await showDialog(
       context: context,
@@ -78,7 +92,27 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     );
 
     if (currentTrial > widget.trialNumber) {
-      Navigator.pop(context);
+      try {
+        CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
+
+        Firestore.instance.runTransaction((Transaction tx) async {
+          var replyObj = {
+            'correctAnswers' : nCorrect,
+            'wrongAnswers' : nIncorrect,
+            'trialCount' : widget.trialNumber,
+            'difficultyLevel' : widget.discriminabilityDifficulty,
+            'displayTime' : widget.presentationLength,
+            'sessionDate' : DateTime.now().toString(),
+          };
+
+          await dbSessions.add(replyObj); 
+        });
+      } catch (e) {
+        // TODO: error msg
+        //showToastFailed();
+      } finally {
+        Navigator.pop(context);
+      }
     } else {
       colorCorrect = possibleColors[Random().nextInt(possibleColors.length)];
       colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
@@ -151,13 +185,13 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       body: Stack(
         children: <Widget>[
           Positioned(
-            child: Text("Trial #$currentTrial of ${widget.trialNumber}"),
+            child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}"),
             left: padding,
             top: padding,
           ),
           Positioned(
             child: Opacity(
-              child: Container(              
+              child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.black,

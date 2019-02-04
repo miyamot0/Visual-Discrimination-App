@@ -194,7 +194,7 @@ class EditPageState extends State<EditPage> {
               Slider(
                 value: difficultyValue,
                 min: 0.0,
-                max: 50.0,              
+                max: 50.0,
                 divisions: 50,
                 label: '$difficultyValue % Similarity',
                 onChanged: (double value) {
@@ -217,7 +217,7 @@ class EditPageState extends State<EditPage> {
               Slider(
                 value: displaySeconds,
                 min: 0.5,
-                max: 10.0,              
+                max: 10.0,
                 divisions: 95,
                 label: 'Sample stimuli presented for $displaySeconds seconds',
                 onChanged: (double value) {

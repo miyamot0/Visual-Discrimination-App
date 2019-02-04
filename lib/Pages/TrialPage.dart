@@ -27,16 +27,26 @@ import 'package:flutter/material.dart';
 import '../Controls/TwoPanelSelectField.dart';
 
 class TrialPage extends StatelessWidget {
+  final String uid;
+  final String documentId;
   final double difficultyLevel;
   final int trialCount;
   final double presentationLength;
 
-  TrialPage(this.difficultyLevel, this.trialCount, this.presentationLength);
+  TrialPage({
+    this.uid,
+    this.documentId,
+    this.difficultyLevel, 
+    this.trialCount, 
+    this.presentationLength
+  });
 
   @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
       body: TwoPanelSelectField(
+        uid: uid,
+        documentId: documentId,
         discriminabilityDifficulty: difficultyLevel,
         trialNumber: trialCount,
         presentationLength: presentationLength,

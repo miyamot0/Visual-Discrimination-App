@@ -27,6 +27,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 import 'package:visual_discrimination_app/Pages/AddPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
+import 'package:visual_discrimination_app/Pages/TrialPage.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
@@ -51,7 +52,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome'),
+        title: Text('Discriminability Training App'),
         actions: <Widget>[
           FlatButton(
             child: Text(
@@ -100,8 +101,18 @@ class HomePage extends StatelessWidget {
                       Icons.play_arrow,
                       size: 30.0,
                     ),
-                    onTap: () => print('fired')
-                    ,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => 
+                        TrialPage(
+                          uid: uid,
+                          documentId: document.documentID,
+                          difficultyLevel: (document['difficultyLevel'] as num).toDouble() / 50.0,
+                          trialCount: (document['trialNumbers'] as num).toDouble().round(),
+                          presentationLength: (document['displayTime'] as num).toDouble(),
+                        ),
+                      ),
+                    ),
                   ),
                   title: new Text(document['participantTag'],
                     style: TextStyle(
