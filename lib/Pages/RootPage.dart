@@ -10,7 +10,6 @@ enum AuthStatus {
 }
 
 class RootPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => _RootPageState();
 }
