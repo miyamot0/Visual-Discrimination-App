@@ -48,6 +48,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
 class EmailFieldValidator {
@@ -96,26 +97,14 @@ class _LoginPageState extends State<LoginPage> {
       try {
         var auth = AuthProvider.of(context).auth;
         if (_formType == FormType.login) {
-          String userId =
-              await auth.signInWithEmailAndPassword(_email, _password);
+          String userId = await auth.signInWithEmailAndPassword(_email, _password);
+          widget.onSignedIn();
           print('Signed in: $userId');
-        } else {
-          String userId = await auth
-              .createUserWithEmailAndPassword(_email, _password);
-          print('Registered user: $userId');
         }
-        widget.onSignedIn();
       } catch (e) {
         print('Error: $e');
       }
     }
-  }
-
-  void moveToRegister() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.register;
-    });
   }
 
   void moveToLogin() {
@@ -125,22 +114,47 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  Future<void> showAlert(BuildContext context, String msg) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Discriminability App Login'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: buildInputs() + buildSubmitButtons(),
+      body: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(16.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: buildInputs() + buildSubmitButtons(),
+              ),
+            ),
           ),
-        )
-      )
+        ],
+      ),
     );
   }
 
@@ -170,14 +184,6 @@ class _LoginPageState extends State<LoginPage> {
           child: Text('Login', style: TextStyle(fontSize: 20.0)),
           onPressed: validateAndSubmit,
         ),
-        /*
-        Stubbed for now
-        FlatButton(
-          child: Text('Create an account',
-              style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToRegister,
-        ),
-        */
       ];
     } else {
       return [

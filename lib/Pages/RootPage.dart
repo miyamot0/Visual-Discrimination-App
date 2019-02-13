@@ -88,7 +88,6 @@ class _RootPageState extends State<RootPage> {
   void _signedOut() {
     setState(() {
       authStatus = AuthStatus.notSignedIn;
-      uid = null;
     });
   }
 
