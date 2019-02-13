@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                         TrialPage(
                           uid: uid,
                           documentId: document.documentID,
-                          difficultyLevel: (document['difficultyLevel'] as num).toDouble() / 50.0,
+                          difficultyLevel: (document['difficultyLevel'] as num).toDouble(),
                           trialCount: (document['trialNumbers'] as num).toDouble().round(),
                           presentationLength: (document['displayTime'] as num).toDouble(),
                         ),

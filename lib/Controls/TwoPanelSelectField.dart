@@ -201,7 +201,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
     }
 
-    colorLerp = Color.lerp(colorCorrect, colorFoil, widget.discriminabilityDifficulty);
+    colorLerp = Color.lerp(colorCorrect, colorFoil, widget.discriminabilityDifficulty / 50.0);
 
     if (mediaData == null) {
       mediaData = MediaQuery.of(context);
