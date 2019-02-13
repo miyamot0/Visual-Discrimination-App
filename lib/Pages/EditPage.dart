@@ -216,7 +216,7 @@ class EditPageState extends State<EditPage> {
               ),
               Slider(
                 value: displaySeconds,
-                min: 0.5,
+                min: 0.0,
                 max: 10.0,
                 divisions: 95,
                 label: 'Sample stimuli presented for $displaySeconds seconds',
