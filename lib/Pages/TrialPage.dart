@@ -23,8 +23,7 @@
 */
 
 import 'package:flutter/material.dart';
-
-import '../Controls/TwoPanelSelectField.dart';
+import 'package:visual_discrimination_app/Controls/TwoPanelSelectField.dart';
 
 class TrialPage extends StatelessWidget {
   final String uid;

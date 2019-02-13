@@ -85,6 +85,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       nIncorrect++;
     }
 
+    /*
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -96,6 +97,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
         );
       }
     );
+    */
 
     if (currentTrial > widget.trialNumber) {
       try {
@@ -129,7 +131,16 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
 
       locationRandomizer = Random().nextInt(100) % 2 == 0;
 
-      animController.forward(from: 0.0);
+      if (widget.presentationLength == 0) {
+        setState(() {
+          opacityReferent = 1.0;
+          opacitySelection = 0.0; 
+        });
+
+      } else {
+        animController.forward(from: 0.0);
+
+      }
     }
   }
 
@@ -138,37 +149,47 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
   {
     super.initState();
 
-    animController = new AnimationController(
-      lowerBound: 0.0,
-      upperBound: 1.0,
-      duration: new Duration(milliseconds: (widget.presentationLength * 1000).toInt()),
-      vsync: this,
-    )
-    ..addListener(() 
-    {
-      this.setState(() {});
-    })
-    ..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        animController.reverse();        
-      }
-      else if (status == AnimationStatus.dismissed) {
-        opacitySelection = 1.0;
-        opacityReferent = 0.0;
-      }
-      else if (status == AnimationStatus.forward) {
-        opacitySelection = 0.0;
-        opacityReferent = 1.0;
-      }
-    });
+    if (widget.presentationLength == 0) {
+      // Load up here as normal
 
-    WidgetsBinding.instance.addPostFrameCallback((_)  => animController.forward());
+      opacityReferent = 1.0;
+      opacitySelection = 0.0;
+
+    } else {
+      animController = new AnimationController(
+        lowerBound: 0.0,
+        upperBound: 1.0,
+        duration: new Duration(milliseconds: (widget.presentationLength * 1000).toInt()),
+        vsync: this,
+      )
+      ..addListener(() 
+      {
+        this.setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          animController.reverse();        
+        }
+        else if (status == AnimationStatus.dismissed) {
+            opacitySelection = 1.0;
+            opacityReferent = 0.0;
+        }
+        else if (status == AnimationStatus.forward) {
+          opacitySelection = 0.0;
+          opacityReferent = 1.0;
+        }
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_)  => animController.forward());
+    }
   }
 
   @override
   void dispose() {
-    animController.stop(canceled: true);
-    animController.dispose();
+    if (widget.presentationLength != 0) {
+      animController.stop(canceled: true);
+      animController.dispose();
+    }
 
     super.dispose();
   }
@@ -197,14 +218,24 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
           ),
           Positioned(
             child: Opacity(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1.0,
+              child: GestureDetector(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1.0,
+                    ),
+                    color: colorLerp,
                   ),
-                  color: colorLerp,
                 ),
+                onTap: () {
+                   if (widget.presentationLength == 0 && opacityReferent == 1) {
+                      setState(() {
+                        opacityReferent = 0;
+                        opacitySelection = 1;
+                      });
+                   }
+                },
               ),
               opacity: opacityReferent,
             ),
@@ -228,7 +259,11 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
                 opacity: opacitySelection,
               ),
               onTap: () {
-                if (animController.isAnimating) return;
+                if (widget.presentationLength > 0) {
+                  if (animController.isAnimating) return;
+                } else if (widget.presentationLength == 0 && opacitySelection == 0) {
+                  return;                  
+                }
 
                 onSelected(true);
               },
@@ -253,8 +288,12 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
                 opacity: opacitySelection,
               ),
               onTap: () {
-                if (animController.isAnimating) return;
-                
+                if (widget.presentationLength > 0) {
+                  if (animController.isAnimating) return;
+                } else if (widget.presentationLength == 0 && opacitySelection == 0) {
+                  return;                  
+                }
+
                 onSelected(false);
               },
             ),
