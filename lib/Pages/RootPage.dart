@@ -48,9 +48,9 @@
 */
 
 import 'package:flutter/material.dart';
-import 'HomePage.dart';
-import 'LoginPage.dart';
-import '../Auth/AuthProvider.dart';
+import 'package:visual_discrimination_app/Pages/HomePage.dart';
+import 'package:visual_discrimination_app/Pages/LoginPage.dart';
+import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
 enum AuthStatus {
   notDetermined,
