@@ -5,6 +5,7 @@ This project is a Flutter-powered application designed to gauge a learner's abil
 ## TO-DO
 
 - Animations/Sounds on correct?
+- fix touch input to start
 
 ## Derivative Works
 
@@ -18,6 +19,7 @@ This project is a derivative work of an earlier project and uses licensed softwa
 
 - firebase_auth - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 - cloud_firestore - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
+- audioplayers - Copyright 2017 Luan Nico (MIT). [Github](https://github.com/luanpotter/audioplayers)
 
 ## Assets
 
