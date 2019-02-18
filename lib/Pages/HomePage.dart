@@ -52,6 +52,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
 import 'package:visual_discrimination_app/Pages/AddPage.dart';
+import 'package:visual_discrimination_app/Pages/DisplayPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
 import 'package:visual_discrimination_app/Pages/TrialPage.dart';
 
@@ -183,8 +184,20 @@ class HomePage extends StatelessWidget {
                             children: <Widget>[
                               StatusDialogItem(
                                 icon: Icons.account_circle,
-                                text: 'username@gmail.com',
-                                onPressed: () { Navigator.pop(context, 'username@gmail.com'); }
+                                text: 'Show Data',
+                                onPressed: () { 
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      DisplayPage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                }
                               ),
                               StatusDialogItem(
                                 icon: Icons.account_circle,
