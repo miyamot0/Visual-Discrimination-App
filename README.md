@@ -36,6 +36,12 @@ This application can be installed as either an Android or iOS application.
 
 This is currently under active development and evaluation.
 
+## Building
+
+flutter build ios --release
+xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Runner.xcarchive
+xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath $PWD/build/Runner.ipa
+
 ## License
 
 Copyright 2018, Shawn P. Gilroy (sgilroy1@lsu.edu)/Louisiana State University - MIT
