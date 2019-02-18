@@ -50,6 +50,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
+import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
 import 'package:visual_discrimination_app/Pages/AddPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
 import 'package:visual_discrimination_app/Pages/TrialPage.dart';
@@ -71,6 +72,18 @@ class HomePage extends StatelessWidget {
     } catch (e) {
       print(e);
     }
+  }
+
+  void showDemoDialog<T>({ BuildContext context, Widget child }) {
+    showDialog<T>(
+      context: context,
+      builder: (BuildContext context) => child,
+    )
+    .then<void>((T value) { // The value passed to Navigator.pop() or null.
+      if (value != null) {
+          print('You selected: $value');
+      }
+    });
   }
 
   @override
@@ -162,20 +175,43 @@ class HomePage extends StatelessWidget {
                         Icons.edit, 
                         size: 30.0,
                       ),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => 
-                          EditPage(
-                            uid: uid,
-                            documentId: document.documentID,
-                            trialCount: (document['trialNumbers'] as num).toDouble(),
-                            difficultyValue: (document['difficultyLevel'] as num).toDouble(),
-                            displaySeconds: (document['displayTime'] as num).toDouble(),
-                            participantTag: document['participantTag'].toString(),
-                            descriptionTag: document['descriptionTag'].toString(),
-                          ),
-                        ),
-                      ),
+                      onTap: () {
+                        showDemoDialog<String>(
+                          context: context,
+                          child: SimpleDialog(
+                            title: const Text('Administrative Options'),
+                            children: <Widget>[
+                              StatusDialogItem(
+                                icon: Icons.account_circle,
+                                text: 'username@gmail.com',
+                                onPressed: () { Navigator.pop(context, 'username@gmail.com'); }
+                              ),
+                              StatusDialogItem(
+                                icon: Icons.account_circle,
+                                text: 'Session Parameters',
+                                onPressed: () { 
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      EditPage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                        trialCount: (document['trialNumbers'] as num).toDouble(),
+                                        difficultyValue: (document['difficultyLevel'] as num).toDouble(),
+                                        displaySeconds: (document['displayTime'] as num).toDouble(),
+                                        participantTag: document['participantTag'].toString(),
+                                        descriptionTag: document['descriptionTag'].toString(),
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                }
+                              ),
+                            ]
+                          )
+                        );
+                      }
                     ),
                   ),
                 );
