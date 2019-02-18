@@ -180,10 +180,10 @@ class HomePage extends StatelessWidget {
                         showDemoDialog<String>(
                           context: context,
                           child: SimpleDialog(
-                            title: const Text('Administrative Options'),
+                            title: const Text('Display/Edit'),
                             children: <Widget>[
                               StatusDialogItem(
-                                icon: Icons.account_circle,
+                                icon: Icons.show_chart,
                                 text: 'Show Data',
                                 onPressed: () { 
                                   Navigator.push(
@@ -192,6 +192,7 @@ class HomePage extends StatelessWidget {
                                       DisplayPage(
                                         uid: uid,
                                         documentId: document.documentID,
+                                        participant: document.data['participantTag'].toString(),
                                       ),
                                     ),
                                   )
@@ -200,8 +201,8 @@ class HomePage extends StatelessWidget {
                                 }
                               ),
                               StatusDialogItem(
-                                icon: Icons.account_circle,
-                                text: 'Session Parameters',
+                                icon: Icons.mode_edit,
+                                text: 'Edit Session',
                                 onPressed: () { 
                                   Navigator.push(
                                     context,

@@ -32,17 +32,19 @@ import 'package:flutter/material.dart' as material show Colors;
 class DisplayPage extends StatelessWidget {
   final String uid;
   final String documentId;
+  final String participant;
 
   DisplayPage({
     this.uid,
     this.documentId,
+    this.participant,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Discriminability Training App'),
+        title: Text('Participant: $participant'),
       ),
       body: new Center(
         child: StreamBuilder(
@@ -67,7 +69,7 @@ class DisplayPage extends StatelessWidget {
                 xDataStr.add('$session');
                 
                 yData.add((doc.data["correctAnswers"] / doc.data["trialCount"]) * 100.0);
-                yData2.add(doc.data["difficultyLevel"]);
+                yData2.add(doc.data["difficultyLevel"] * 2.0);
 
                 session += 1.0;
               });
@@ -76,9 +78,9 @@ class DisplayPage extends StatelessWidget {
                 int length = xDataStr.length;
                 int start  = length - 20;
 
-                xDataStr   = xDataStr.skip(start);
-                yData      = yData.skip(start);
-                yData2     = yData2.skip(start);
+                xDataStr   = xDataStr.skip(start).toList();
+                yData      = yData.skip(start).toList();
+                yData2     = yData2.skip(start).toList();
               }
 
               ChartData chartData = ChartData();
