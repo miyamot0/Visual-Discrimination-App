@@ -26,6 +26,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_charts/flutter_charts.dart';
 
+import 'dart:ui' as ui show Paint;
+import 'package:flutter/material.dart' as material show Colors;
+
 class DisplayPage extends StatelessWidget {
   final String uid;
   final String documentId;
@@ -45,6 +48,7 @@ class DisplayPage extends StatelessWidget {
         child: StreamBuilder(
           stream: Firestore.instance.collection('storage/$uid/participants/$documentId/sessions').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
             if (!snapshot.hasData) {
               return Column(
                 children: <Widget>[
@@ -54,32 +58,12 @@ class DisplayPage extends StatelessWidget {
             }
             else
             {
-              List<double> xData = [];
               List<String> xDataStr = [];
               List<double> yData = [];
               List<double> yData2= [];
               double session = 1.0;
 
-              ChartData chartData = ChartData();
-              LineChartOptions _lineChartOptions = new LineChartOptions();
-              VerticalBarChartOptions _verticalBarChartOptions = new VerticalBarChartOptions();
-
-              chartData = new ChartData();
-              chartData.dataRowsLegends = [
-                "Java",
-                "Dart"];
-              chartData.dataRows = [
-                [9.0, 4.0,  3.0,  9.0, ],
-                [7.0, 6.0,  7.0,  6.0, ],
-              ];
-              chartData.xLabels =  ["1", "2", "3", "4"];
-              chartData.dataRowsColors = [
-                Colors.blue,
-                Colors.yellow,
-              ];
-
               snapshot.data.documents.forEach((doc) {
-                xData.add(session);
                 xDataStr.add('$session');
                 
                 yData.add((doc.data["correctAnswers"] / doc.data["trialCount"]) * 100.0);
@@ -88,14 +72,22 @@ class DisplayPage extends StatelessWidget {
                 session += 1.0;
               });
 
-              //_lineChartOptions.useUserProvidedYLabels = true; // use the labels below on Y axis
+              if (xDataStr.length > 20) {
+                int length = xDataStr.length;
+                int start  = length - 20;
 
-              /*
-              // Has data to iterate over
+                xDataStr   = xDataStr.skip(start);
+                yData      = yData.skip(start);
+                yData2     = yData2.skip(start);
+              }
+
               ChartData chartData = ChartData();
-              chartData.dataRowsLegends = ["Accuracy", "Difficulty"];
+              chartData.dataRowsLegends = [
+                "Accuracy",
+                "Difficulty"
+              ];
               chartData.dataRows = [
-                yData,
+                yData, 
                 yData2,
               ];
               chartData.xLabels = xDataStr;
@@ -103,15 +95,18 @@ class DisplayPage extends StatelessWidget {
                 Colors.blue,
                 Colors.red,
               ];
-              */
 
-              LineChart lineChart = new LineChart(
-                painter: new LineChartPainter(),
-                container: new LineChartContainer(
+              LineChartOptions chartOptions  = LineChartOptions();
+              chartOptions.hotspotInnerPaint = ui.Paint()..color = material.Colors.white;
+              chartOptions.hotspotOuterPaint = ui.Paint()..color = material.Colors.black;
+
+              LineChart lineChart = LineChart(
+                painter: LineChartPainter(),
+                container: LineChartContainer(
                   chartData: chartData, 
-                  chartOptions: LineChartOptions(),
+                  chartOptions: chartOptions,
                   xContainerLabelLayoutStrategy: DefaultIterativeLabelLayoutStrategy(
-                    options: VerticalBarChartOptions(),
+                    options: LineChartOptions(),
                   ),
                 ),
               );
@@ -141,81 +136,3 @@ class DisplayPage extends StatelessWidget {
     );
   }
 }
-
-/*
-class DisplayPage extends StatefulWidget {
-  final String uid;
-  final String documentId;
-
-  DisplayPage({
-    this.uid,
-    this.documentId,
-  });
-
-  @override
-  DisplayPageState createState() => new DisplayPageState();
-}
-
-class DisplayPageState extends State<DisplayPage> {
-  LineChartOptions _lineChartOptions;
-  ChartOptions _verticalBarChartOptions;
-  LabelLayoutStrategy _xContainerLabelLayoutStrategy;
-  ChartData _chartData;
-
-  DisplayPageState() {
-    defineOptionsAndData();
-  }
-
-  void defineOptionsAndData() {
-    _lineChartOptions = new LineChartOptions();
-    _verticalBarChartOptions = new VerticalBarChartOptions();
-    _xContainerLabelLayoutStrategy = new DefaultIterativeLabelLayoutStrategy(
-      options: _verticalBarChartOptions,
-    );
-    _chartData = new RandomChartData(
-      useUserProvidedYLabels: _lineChartOptions.useUserProvidedYLabels
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    defineOptionsAndData();
-
-    LineChart lineChart = new LineChart(
-      painter: new LineChartPainter(),
-      container: new LineChartContainer(
-        chartData: _chartData, // @required
-        chartOptions: _lineChartOptions, // @required
-        xContainerLabelLayoutStrategy: _xContainerLabelLayoutStrategy, // @optional
-      ),
-    );
-
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('TODO'),
-      ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(''),
-            new Expanded(
-              child: new Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  new Text(''),
-                  new Expanded(
-                    child: lineChart, 
-                  ),
-                  new Text(''), 
-                ],
-              ),
-            ),
-            new Text(''),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
