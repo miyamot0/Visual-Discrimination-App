@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
       await auth.signOut();
       onSignedOut();
     } catch (e) {
-      print(e);
+      print("Error: $e");
     }
   }
 
@@ -79,12 +79,7 @@ class HomePage extends StatelessWidget {
     showDialog<T>(
       context: context,
       builder: (BuildContext context) => child,
-    )
-    .then<void>((T value) { // The value passed to Navigator.pop() or null.
-      if (value != null) {
-          print('You selected: $value');
-      }
-    });
+    );
   }
 
   @override

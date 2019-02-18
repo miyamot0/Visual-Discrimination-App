@@ -65,7 +65,7 @@ class PasswordFieldValidator {
 
 class LoginPage extends StatefulWidget {
   LoginPage({this.onSignedIn});
-  final VoidCallback onSignedIn;
+  final Function onSignedIn;
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -98,8 +98,7 @@ class _LoginPageState extends State<LoginPage> {
         var auth = AuthProvider.of(context).auth;
         if (_formType == FormType.login) {
           String userId = await auth.signInWithEmailAndPassword(_email, _password);
-          widget.onSignedIn();
-          print('Signed in: $userId');
+          widget.onSignedIn(userId);
         }
       } catch (e) {
         print('Error: $e');
@@ -177,27 +176,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   List<Widget> buildSubmitButtons() {
-    if (_formType == FormType.login) {
-      return [
-        RaisedButton(
-          key: Key('signIn'),
-          child: Text('Login', style: TextStyle(fontSize: 20.0)),
-          onPressed: validateAndSubmit,
-        ),
-      ];
-    } else {
-      return [
-        RaisedButton(
-          child: Text('Create an account',
-              style: TextStyle(fontSize: 20.0)),
-          onPressed: validateAndSubmit,
-        ),
-        FlatButton(
-          child: Text('Have an account? Login',
-              style: TextStyle(fontSize: 20.0)),
-          onPressed: moveToLogin,
-        ),
-      ];
-    }
+    return [
+      RaisedButton(
+        key: Key('signIn'),
+        child: Text('Login', style: TextStyle(fontSize: 20.0)),
+        onPressed: validateAndSubmit,
+      ),
+    ];
   }
 }

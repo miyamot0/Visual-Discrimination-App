@@ -79,8 +79,9 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  void _signedIn() {
+  void _signedIn(String userIdCb) {
     setState(() {
+      uid = userIdCb;
       authStatus = AuthStatus.signedIn;
     });
   }
