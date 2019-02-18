@@ -20,6 +20,7 @@ This project is a derivative work of an earlier project and uses licensed softwa
 - firebase_auth - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 - cloud_firestore - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 - audioplayers - Copyright 2017 Luan Nico (MIT). [Github](https://github.com/luanpotter/audioplayers)
+- flutter_charts - Copyright 2017 Milan Zimmermann (BSD-2). [Github](https://github.com/mzimmerm/flutter_charts)
 
 ## Assets
 
