@@ -54,10 +54,10 @@ import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
 class RootPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _RootPageState();
+  State<StatefulWidget> createState() => RootPageState();
 }
 
-class _RootPageState extends State<RootPage> {
+class RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.notDetermined;
   String uid;
 
@@ -73,6 +73,9 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
+  /*
+   * Sign in user
+   */
   void _signedIn(String userIdCb) {
     setState(() {
       uid = userIdCb;
@@ -80,6 +83,9 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
+  /*
+   * Sign out user
+   */
   void _signedOut() {
     setState(() {
       authStatus = AuthStatus.notSignedIn;
@@ -104,6 +110,9 @@ class _RootPageState extends State<RootPage> {
     return null;
   }
 
+  /*
+   * Build indeterminate screen
+   */
   Widget _buildWaitingScreen() {
     return Scaffold(
       body: Container(
