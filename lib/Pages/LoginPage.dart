@@ -84,6 +84,9 @@ class LoginPageState extends State<LoginPage> {
   String password;
   bool submitting = false;
 
+  final FocusNode userFocus = FocusNode();
+  final FocusNode passFocus = FocusNode();
+
   /*
    * Toggle progress
    */
@@ -193,8 +196,12 @@ class LoginPageState extends State<LoginPage> {
         keyboardType: TextInputType.emailAddress,
         validator: EmailFieldValidator.validate,
         textInputAction: TextInputAction.next,
+        focusNode: userFocus,
         onSaved: (value) => email = value,
-        onFieldSubmitted: (value) => validateAndSubmit,
+        onFieldSubmitted: (value) {
+          userFocus.unfocus();
+          FocusScope.of(context).requestFocus(passFocus);
+        },
       ),
       TextFormField(
         key: Key('password'),
@@ -204,8 +211,13 @@ class LoginPageState extends State<LoginPage> {
         obscureText: true,
         validator: PasswordFieldValidator.validate,
         textInputAction: TextInputAction.done,
+        focusNode: passFocus,
         onSaved: (value) => password = value,
-        onFieldSubmitted: (value) => validateAndSubmit,
+        onFieldSubmitted: (value) {
+          passFocus.unfocus();
+
+          validateAndSubmit();
+        },
       ),
     ];
   }
