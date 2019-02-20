@@ -23,7 +23,9 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 class EditPage extends StatefulWidget {
   final String uid;
@@ -59,7 +61,6 @@ class EditPageState extends State<EditPage> {
   double displaySeconds;
   String descTag;
 
-  final key = new GlobalKey<ScaffoldState>();
   final textEditController = TextEditingController();
   final textStyle = TextStyle(
     fontFamily: "Roboto",
@@ -73,7 +74,7 @@ class EditPageState extends State<EditPage> {
     this.descTag,
   );
 
-  updateStateRemotely() async {
+  void updateStateRemotely() async {
     try {
       await Firestore.instance.collection('storage/${widget.uid}/participants').document(widget.documentId).setData(
         {
@@ -84,39 +85,9 @@ class EditPageState extends State<EditPage> {
         },
         merge: true,
       );
-      //.then(showToastSuccess);
-    } catch (e) {
-      showToastFailed(null);
+    } on PlatformException catch (e) {
+      await showAlert(context, e.message);
     }
-  }
-
-  // Stubbed for now
-  showToastSuccess(state) {
-    key.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
-    key.currentState.showSnackBar(
-      SnackBar(
-        content: new Text(
-          "Uploaded to server"
-        ),
-        duration: Duration(
-          seconds: 1
-        ),
-      ),
-    );
-  }
-
-  showToastFailed(state) {
-    key.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
-    key.currentState.showSnackBar(
-      SnackBar(
-        content: new Text(
-          "Saving Failed!"
-        ),
-        duration: Duration(
-          seconds: 1
-        ),
-      ),
-    );
   }
 
   @override
@@ -136,7 +107,6 @@ class EditPageState extends State<EditPage> {
   @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
-      key: key,
       appBar: new AppBar(
         title: new Text(
           "Participant: ${widget.participantTag}"
