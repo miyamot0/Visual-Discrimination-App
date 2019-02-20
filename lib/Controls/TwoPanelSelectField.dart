@@ -23,6 +23,7 @@
 */
 
 import 'dart:math';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
@@ -81,55 +82,52 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       nIncorrect = 0;
 
   void onSelected(bool output) async {
-    currentTrial++;
+    currentTrial = currentTrial + 1;
 
     if (output) {
       nCorrect++;
       player.play(audioPath);
+
+      showFeedback(context);
     } else {
       nIncorrect++;
     }
 
     // TODO add animated dialog
 
-    await showFeedback(context);
-
-    /*
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Response"),
-          content: Text(
-            output ? "Correct Response" : "Incorrect Response"    
-          ),
-        );
-      }
-    );
-    */
-
     if (currentTrial > widget.trialNumber) {
-      try {
-        CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
+      print('finishing at $currentTrial');
 
-        Firestore.instance.runTransaction((Transaction tx) async {
-          var replyObj = {
-            'correctAnswers' : nCorrect,
-            'wrongAnswers' : nIncorrect,
-            'trialCount' : widget.trialNumber,
-            'difficultyLevel' : widget.discriminabilityDifficulty,
-            'displayTime' : widget.presentationLength,
-            'sessionDate' : DateTime.now().toString(),
-          };
+      setState(() {
+        opacityReferent = 0.0;
+        opacitySelection = 0.0; 
+      });
 
-          await dbSessions.add(replyObj); 
-        });
-      } on PlatformException catch (e) {
-        await showAlert(context, e.message);
-      } finally {
-        Navigator.pop(context);
-      }
+      await Future.delayed(Duration(seconds: 3))
+      .then((asdf) async {
+        try {
+          CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
+
+          Firestore.instance.runTransaction((Transaction tx) async {
+            var replyObj = {
+              'correctAnswers' : nCorrect,
+              'wrongAnswers' : nIncorrect,
+              'trialCount' : widget.trialNumber,
+              'difficultyLevel' : widget.discriminabilityDifficulty,
+              'displayTime' : widget.presentationLength,
+              'sessionDate' : DateTime.now().toString(),
+            };
+
+            await dbSessions.add(replyObj); 
+          });
+        } on PlatformException catch (e) {
+          await showAlert(context, e.message);
+        } finally {
+          Navigator.pop(context);
+        }
+      });
     } else {
+      print('running at $currentTrial');
       colorCorrect = possibleColors[Random().nextInt(possibleColors.length)];
       colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
 
@@ -214,7 +212,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     }
 
     return Scaffold(
-      body: Stack(
+      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator()) : Stack(
         children: <Widget>[
           Positioned(
             child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}"),

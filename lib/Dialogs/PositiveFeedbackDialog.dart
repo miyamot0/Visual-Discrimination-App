@@ -22,42 +22,72 @@
     THE SOFTWARE.
 */
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 /*
  * Show encouragement
  */
-Future<void> showFeedback(BuildContext context) {
-  return showDialog<void>(
-    context: context,
+void showFeedback(BuildContext context) {
+  Navigator.of(context).push(new MaterialPageRoute<Null>(
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Good job!'),
-        content: FeedbackWidget(),
-        actions: <Widget>[],
-      );
+      return SmileRotation();
     },
+    fullscreenDialog: true)
   );
 }
 
-class FeedbackWidget extends StatelessWidget {
-  const FeedbackWidget({ Key key, this.text, this.onPressed }) : super(key: key);
+class SmileRotation extends StatefulWidget {
+  @override
+  SmileRotationState createState() => SmileRotationState();
+}
 
-  final String text;
-  final VoidCallback onPressed;
+class SmileRotationState extends State<SmileRotation> with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = new AnimationController(
+      vsync: this,
+      duration: new Duration(seconds: 1),
+    );
+
+    animation = Tween<double>(begin: 50, end: 150).animate(animationController)            
+    ..addListener(() {            
+      setState(() {            
+      
+      });
+    })
+    ..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {            
+        Navigator.of(context).pop();
+      }
+    });
+
+    animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text("stuff"),
-        ],
-      ),
+    return new Container(
+      alignment: Alignment.center,
+      color: Colors.white,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        height: 300 * (animation.value / 100.0),
+        width: 300 * (animation.value / 100.0),
+        child: Image.asset(
+            'assets/smiley-147407.png', 
+            fit: BoxFit.fitWidth,
+        ),
+      )
     );
   }
 }
