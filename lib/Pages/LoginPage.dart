@@ -51,6 +51,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 /*
  * Validate email address
@@ -136,28 +137,7 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  /*
-   * Show error
-   */
-  Future<void> showAlert(BuildContext context, String msg) {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(msg),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {

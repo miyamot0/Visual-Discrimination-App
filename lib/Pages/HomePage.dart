@@ -48,6 +48,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
@@ -55,6 +56,7 @@ import 'package:visual_discrimination_app/Pages/AddPage.dart';
 import 'package:visual_discrimination_app/Pages/DisplayPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
 import 'package:visual_discrimination_app/Pages/TrialPage.dart';
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
@@ -65,17 +67,20 @@ class HomePage extends StatelessWidget {
   final VoidCallback onSignedOut;
   final String uid;
 
-  void _signOut(BuildContext context) async {
+  /*
+   * Sign out user
+   */
+  void signOut(BuildContext context) async {
     try {
       var auth = AuthProvider.of(context).auth;
       await auth.signOut();
       onSignedOut();
-    } catch (e) {
-      print("Error: $e");
+    } on PlatformException catch (e) {
+      await showAlert(context, e.message);
     }
   }
 
-  void showDemoDialog<T>({ BuildContext context, Widget child }) {
+  void showOptionDialog<T>({ BuildContext context, Widget child }) {
     showDialog<T>(
       context: context,
       builder: (BuildContext context) => child,
@@ -113,7 +118,7 @@ class HomePage extends StatelessWidget {
                 color: Colors.white
               )
             ),
-            onPressed: () => _signOut(context)
+            onPressed: () => signOut(context)
           ),
         ],
       ),
@@ -150,7 +155,7 @@ class HomePage extends StatelessWidget {
                   ),
                   title: new Text(document['participantTag'],
                     style: TextStyle(
-                      fontWeight: FontWeight.bold
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   subtitle: new Text(document['descriptionTag']),
@@ -162,7 +167,7 @@ class HomePage extends StatelessWidget {
                       border: new Border(
                         right: new BorderSide(
                           width: 1.0, 
-                          color: Colors.white24
+                          color: Colors.white24,
                         ),
                       ),
                     ),
@@ -172,7 +177,7 @@ class HomePage extends StatelessWidget {
                         size: 30.0,
                       ),
                       onTap: () {
-                        showDemoDialog<String>(
+                        showOptionDialog<String>(
                           context: context,
                           child: SimpleDialog(
                             title: const Text('Display/Edit'),
