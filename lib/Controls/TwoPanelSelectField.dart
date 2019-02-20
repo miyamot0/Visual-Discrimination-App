@@ -22,13 +22,13 @@
     THE SOFTWARE.
 */
 
-
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
+import 'package:visual_discrimination_app/Dialogs/PositiveFeedbackDialog.dart';
 
 class TwoPanelSelectField extends StatefulWidget {
   final String uid;
@@ -81,7 +81,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       nIncorrect = 0;
 
   void onSelected(bool output) async {
-    currentTrial = currentTrial++;
+    currentTrial++;
 
     if (output) {
       nCorrect++;
@@ -89,6 +89,10 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     } else {
       nIncorrect++;
     }
+
+    // TODO add animated dialog
+
+    await showFeedback(context);
 
     /*
     await showDialog(
@@ -140,13 +144,13 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
           opacityReferent = 1.0;
           opacitySelection = 0.0; 
         });
-
       } else {
         animController.forward(from: 0.0);
-
       }
     }
   }
+
+  /* Note: In here, if presentation length is zero a response is necessary to trigger the trial */
 
   @override
   void initState()
@@ -154,11 +158,8 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     super.initState();
 
     if (widget.presentationLength == 0) {
-      // Load up here as normal
-
       opacityReferent = 1.0;
       opacitySelection = 0.0;
-
     } else {
       animController = new AnimationController(
         lowerBound: 0.0,
@@ -297,7 +298,6 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
                 } else if (widget.presentationLength == 0 && opacitySelection == 0) {
                   return;                  
                 }
-
                 onSelected(false);
               },
             ),

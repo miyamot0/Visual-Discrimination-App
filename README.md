@@ -27,6 +27,7 @@ This project is a derivative work of an earlier project and uses licensed softwa
 This project uses open assets to support its functionality:
 
 - [Short Success Sound Glockenspiel Treasure Video Game.mp3](https://freesound.org/people/FunWithSound/sounds/456965/) - CC0 - Copyright 2019 FunWithSound
+- [Smiley Face](https://pixabay.com/en/smiley-face-happy-thumbs-up-thumb-147407/) - Public Domain - Copyright 2019 Pixabay
 
 ## Installation
 
