@@ -190,7 +190,9 @@ class LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           labelText: 'Email'
         ),
+        keyboardType: TextInputType.emailAddress,
         validator: EmailFieldValidator.validate,
+        textInputAction: TextInputAction.next,
         onSaved: (value) => email = value,
         onFieldSubmitted: (value) => validateAndSubmit,
       ),
@@ -201,6 +203,7 @@ class LoginPageState extends State<LoginPage> {
         ),
         obscureText: true,
         validator: PasswordFieldValidator.validate,
+        textInputAction: TextInputAction.done,
         onSaved: (value) => password = value,
         onFieldSubmitted: (value) => validateAndSubmit,
       ),
