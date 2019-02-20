@@ -126,7 +126,7 @@ class HomePage extends StatelessWidget {
         child: StreamBuilder(
           stream: Firestore.instance.collection('storage/$uid/participants').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return new Text('Loading...');
+            if (!snapshot.hasData) return const CircularProgressIndicator();
 
             return new ListView(
               children: snapshot.data.documents.map((document) {
