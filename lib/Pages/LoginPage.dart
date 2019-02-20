@@ -47,16 +47,23 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
+/*
+ * Validate email address
+ */
 class EmailFieldValidator {
   static String validate(String value) {
     return value.isEmpty ? 'Email can\'t be empty' : null;
   }
 }
 
+/*
+ * Validate password
+ */
 class PasswordFieldValidator {
   static String validate(String value) {
     return value.isEmpty ? 'Password can\'t be empty' : null;
@@ -68,21 +75,18 @@ class LoginPage extends StatefulWidget {
   final Function onSignedIn;
 
   @override
-  State<StatefulWidget> createState() => _LoginPageState();
+  State<StatefulWidget> createState() => LoginPageState();
 }
 
-enum FormType {
-  login,
-  register,
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
 
-  String _email;
-  String _password;
-  FormType _formType = FormType.login;
+  String email;
+  String password;
 
+  /*
+   * Validate form
+   */
   bool validateAndSave() {
     final form = formKey.currentState;
     if (form.validate()) {
@@ -92,27 +96,25 @@ class _LoginPageState extends State<LoginPage> {
     return false;
   }
 
+  /*
+   * Submit for login
+   */
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
         var auth = AuthProvider.of(context).auth;
-        if (_formType == FormType.login) {
-          String userId = await auth.signInWithEmailAndPassword(_email, _password);
-          widget.onSignedIn(userId);
-        }
-      } catch (e) {
-        print('Error: $e');
+        String userId = await auth.signInWithEmailAndPassword(email, password);
+        widget.onSignedIn(userId);
+      } on PlatformException catch (e) {
+        //print('Error: ${e.message}');       
+        await showAlert(context, e.message);
       }
     }
   }
 
-  void moveToLogin() {
-    formKey.currentState.reset();
-    setState(() {
-      _formType = FormType.login;
-    });
-  }
-
+  /*
+   * Show error
+   */
   Future<void> showAlert(BuildContext context, String msg) {
     return showDialog<void>(
       context: context,
@@ -157,24 +159,34 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  /*
+   * Build inputs for username, password
+   */
   List<Widget> buildInputs() {
     return [
       TextFormField(
         key: Key('email'),
-        decoration: InputDecoration(labelText: 'Email'),
+        decoration: InputDecoration(
+          labelText: 'Email'
+        ),
         validator: EmailFieldValidator.validate,
-        onSaved: (value) => _email = value,
+        onSaved: (value) => email = value,
       ),
       TextFormField(
         key: Key('password'),
-        decoration: InputDecoration(labelText: 'Password'),
+        decoration: InputDecoration(
+          labelText: 'Password'
+        ),
         obscureText: true,
         validator: PasswordFieldValidator.validate,
-        onSaved: (value) => _password = value,
+        onSaved: (value) => password = value,
       ),
     ];
   }
 
+  /*
+   * Build button for signin
+   */
   List<Widget> buildSubmitButtons() {
     return [
       RaisedButton(
