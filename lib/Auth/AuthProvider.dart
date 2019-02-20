@@ -50,6 +50,12 @@
 import 'package:flutter/material.dart';
 import 'package:visual_discrimination_app/Auth/Auth.dart';
 
+enum AuthStatus {
+  notDetermined,
+  notSignedIn,
+  signedIn,
+}
+
 class AuthProvider extends InheritedWidget {
   AuthProvider({Key key, Widget child, this.auth}) : super(key: key, child: child);
   final BaseAuth auth;

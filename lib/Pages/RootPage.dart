@@ -52,12 +52,6 @@ import 'package:visual_discrimination_app/Pages/HomePage.dart';
 import 'package:visual_discrimination_app/Pages/LoginPage.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
 
-enum AuthStatus {
-  notDetermined,
-  notSignedIn,
-  signedIn,
-}
-
 class RootPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _RootPageState();
