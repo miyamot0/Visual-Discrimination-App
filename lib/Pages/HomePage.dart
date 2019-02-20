@@ -51,12 +51,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
 import 'package:visual_discrimination_app/Pages/AddPage.dart';
 import 'package:visual_discrimination_app/Pages/DisplayPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
 import 'package:visual_discrimination_app/Pages/TrialPage.dart';
-import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
@@ -80,6 +80,9 @@ class HomePage extends StatelessWidget {
     }
   }
 
+  /*
+   * Show options for editing/displaying 
+   */
   void showOptionDialog<T>({ BuildContext context, Widget child }) {
     showDialog<T>(
       context: context,

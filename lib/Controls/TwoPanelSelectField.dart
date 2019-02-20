@@ -22,10 +22,13 @@
     THE SOFTWARE.
 */
 
+
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 class TwoPanelSelectField extends StatefulWidget {
   final String uid;
@@ -49,37 +52,39 @@ class TwoPanelSelectField extends StatefulWidget {
 }
 
 class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTickerProviderStateMixin {
-  MediaQueryData mediaData;
-  int currentTrial = 1;
 
+  /* Layout ref's */
+  MediaQueryData mediaData;
   static const double padding = 50.0;
   static double iconWidth = 100.0;
 
-  static AudioCache player = new AudioCache();
+  /* Audio ref's */
   static const audioPath = "short-success-sound-glockenspiel-treasure-video-game.mp3";
+  static AudioCache player = new AudioCache();
 
+  /* Referent ref's */
+  static final List<Color> possibleColors = [
+    Colors.white, 
+    Colors.black
+  ];
+  Color colorCorrect = possibleColors[Random().nextInt(possibleColors.length - 1)],
+        colorFoil    = possibleColors[Random().nextInt(possibleColors.length - 1)],
+        colorLerp;
   bool locationRandomizer = Random().nextInt(100) % 2 == 0;
-
-  static final List<Color> possibleColors = [Colors.white, Colors.black];
-
-  Color colorCorrect = possibleColors[Random().nextInt(possibleColors.length - 1)];
-  Color colorFoil = possibleColors[Random().nextInt(possibleColors.length - 1)];
-  Color colorLerp;
-
+  double opacityReferent  = 1.0,
+         opacitySelection = 0.0;
   AnimationController animController;
 
-  double opacityReferent = 1.0;
-  double opacitySelection = 0.0;
-
-  int nCorrect = 0;
-  int nIncorrect = 0;
+  /* Response ref's */
+  int currentTrial = 1,
+      nCorrect = 0,
+      nIncorrect = 0;
 
   void onSelected(bool output) async {
-    currentTrial = currentTrial + 1;
+    currentTrial = currentTrial++;
 
     if (output) {
       nCorrect++;
-
       player.play(audioPath);
     } else {
       nIncorrect++;
@@ -115,9 +120,8 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
 
           await dbSessions.add(replyObj); 
         });
-      } catch (e) {
-        // TODO: error msg
-        //showToastFailed();
+      } on PlatformException catch (e) {
+        await showAlert(context, e.message);
       } finally {
         Navigator.pop(context);
       }
