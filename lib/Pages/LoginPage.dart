@@ -80,9 +80,18 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-
   String email;
   String password;
+  bool submitting = false;
+
+  /*
+   * Toggle progress
+   */
+  void toggleSubmitState() {
+    setState(() {
+      submitting = !submitting;
+    });
+  }
 
   /*
    * Validate form
@@ -102,12 +111,24 @@ class LoginPageState extends State<LoginPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
+        setState(() {
+          toggleSubmitState(); 
+        });
+
         var auth = AuthProvider.of(context).auth;
+
+        await Future.delayed(new Duration(milliseconds: 1000));
+
         String userId = await auth.signInWithEmailAndPassword(email, password);
         widget.onSignedIn(userId);
+
       } on PlatformException catch (e) {
-        //print('Error: ${e.message}');       
         await showAlert(context, e.message);
+
+      } finally {
+        setState(() {
+          toggleSubmitState(); 
+        });
       }
     }
   }
@@ -148,9 +169,9 @@ class LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.all(16.0),
             child: Form(
               key: formKey,
-              child: Column(
+              child: submitting ? Center(child: const CircularProgressIndicator()) : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: buildInputs() + buildSubmitButtons(),
+                children:  buildInputs() + buildSubmitButtons(),
               ),
             ),
           ),
@@ -171,6 +192,7 @@ class LoginPageState extends State<LoginPage> {
         ),
         validator: EmailFieldValidator.validate,
         onSaved: (value) => email = value,
+        onFieldSubmitted: (value) => validateAndSubmit,
       ),
       TextFormField(
         key: Key('password'),
@@ -180,6 +202,7 @@ class LoginPageState extends State<LoginPage> {
         obscureText: true,
         validator: PasswordFieldValidator.validate,
         onSaved: (value) => password = value,
+        onFieldSubmitted: (value) => validateAndSubmit,
       ),
     ];
   }
