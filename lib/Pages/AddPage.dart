@@ -24,6 +24,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 
 class AddPage extends StatefulWidget {
   final String uid;
@@ -36,18 +38,10 @@ class AddPage extends StatefulWidget {
   AddPageState createState() => AddPageState();
 }
 
-class FieldValidator {
-  static String validate(String value) {
-    return value.isEmpty ? 'Email can\'t be empty' : null;
-  }
-}
-
 class AddPageState extends State<AddPage> {
   double difficultyValue = 1.0;
   double trialCount = 5.0;
   double displaySeconds = 1;
-
-  final key = new GlobalKey<ScaffoldState>();
 
   final nameController = TextEditingController();
   final descController = TextEditingController();
@@ -60,8 +54,10 @@ class AddPageState extends State<AddPage> {
     super.dispose();
   }
 
-  submitNewDocument() async {
-
+  /*
+   * Submit a new record to FB 
+   */
+  void submitNewDocument() async {
     try {
       CollectionReference dbReplies = Firestore.instance.collection('storage/${widget.uid}/participants');
 
@@ -78,29 +74,14 @@ class AddPageState extends State<AddPage> {
       }).then((val) {
         Navigator.pop(context, false);
       });
-    } catch (e) {
-      showToastFailed();
+    } on PlatformException catch (e) {
+      await showAlert(context, e.message);
     }
-  }
-
-  showToastFailed() {
-    key.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
-    key.currentState.showSnackBar(
-      SnackBar(
-        content: new Text(
-          "Saving Failed!"
-        ),
-        duration: Duration(
-          seconds: 1
-        ),
-      ),
-    );
   }
 
   @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
-      key: key,
       appBar: new AppBar(
         title: new Text("Discrimination Trial Task"),
       ),
