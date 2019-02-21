@@ -93,8 +93,6 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
       nIncorrect++;
     }
 
-    // TODO add animated dialog
-
     if (currentTrial > widget.trialNumber) {
       print('finishing at $currentTrial');
 
