@@ -210,7 +210,9 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     }
 
     return Scaffold(
-      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator()) : Stack(
+      backgroundColor: Colors.black,
+      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(
+        
         children: <Widget>[
           Positioned(
             child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}"),
