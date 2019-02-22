@@ -24,6 +24,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:visual_discrimination_app/Controls/OneStimuliPreTeachingField.dart';
+import 'package:visual_discrimination_app/Controls/TwoStimuliPreTeachingField.dart';
 
 class PracticePage extends StatelessWidget {
   final String uid;
@@ -38,8 +39,6 @@ class PracticePage extends StatelessWidget {
     @required this.comparisons
   });
 
-  // TODO: second comparison
-
   @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
@@ -47,7 +46,11 @@ class PracticePage extends StatelessWidget {
         uid: uid,
         documentId: documentId,
         trialNumber: trialCount,
-      ) : Container(),
+      ) : TwoStimuliPreTeachingField(
+        uid: uid,
+        documentId: documentId,
+        trialNumber: trialCount,
+      ),
     );
   }
 }
