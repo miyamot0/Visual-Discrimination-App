@@ -66,7 +66,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
   /* Referent ref's */
   static final List<Color> possibleColors = [
     Colors.white, 
-    Colors.black
+    Colors.redAccent
   ];
   Color colorCorrect = possibleColors[Random().nextInt(possibleColors.length - 1)],
         colorFoil    = possibleColors[Random().nextInt(possibleColors.length - 1)],
@@ -94,7 +94,6 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     }
 
     if (currentTrial > widget.trialNumber) {
-      print('finishing at $currentTrial');
 
       setState(() {
         opacityReferent = 0.0;
@@ -125,7 +124,6 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
         }
       });
     } else {
-      print('running at $currentTrial');
       colorCorrect = possibleColors[Random().nextInt(possibleColors.length)];
       colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
 
@@ -211,8 +209,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(
-        
+      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
         children: <Widget>[
           Positioned(
             child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}"),
