@@ -56,6 +56,7 @@ import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
 import 'package:visual_discrimination_app/Pages/AddPage.dart';
 import 'package:visual_discrimination_app/Pages/DisplayPage.dart';
 import 'package:visual_discrimination_app/Pages/EditPage.dart';
+import 'package:visual_discrimination_app/Pages/PracticePage.dart';
 import 'package:visual_discrimination_app/Pages/TrialPage.dart';
 
 class HomePage extends StatelessWidget {
@@ -225,6 +226,44 @@ class HomePage extends StatelessWidget {
                                   );
                                 }
                               ),
+                              StatusDialogItem(
+                                icon: Icons.info,
+                                text: 'Practice (1s/1c)',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      PracticePage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                        trialCount: 5,
+                                        comparisons: 1,
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                },
+                              ),
+                              StatusDialogItem(
+                                icon: Icons.info,
+                                text: 'Practice (1s/2c)',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      PracticePage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                        trialCount: 5,
+                                        comparisons: 2,
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                },
+                              )
                             ]
                           )
                         );
