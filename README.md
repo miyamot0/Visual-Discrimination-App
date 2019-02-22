@@ -2,10 +2,16 @@
 
 This project is a Flutter-powered application designed to gauge a learner's ability to make visual discriminations (i.e., colors). This is built entirely in Google's Flutter, tested across Android and iOS. Only Android and iOS are actively maintained and under evaluation at this point.
 
-## TO-DO
+## Instructions
 
-- Animations/Sounds on correct?
-- fix touch input to start
+- Web Login (optional): [https://visualdiscriminationproject.github.io/](https://visualdiscriminationproject.github.io/)
+- App Login: Log in per supplied credentials
+- Add Participant: In home screen, hit add participant (Name, describe, and input session conditions)
+- Pre-training (1 sample, 1 comparison): Select the 'Edit' icon and then 'Practice (1s/1c)'
+- Pre-training (1 sample, 2 comparison): Select the 'Edit' icon and then 'Practice (1s/2c)'
+- Run Session: Press the 'Play' icon on the home page
+- Show Data: Select the 'Edit' icon and then press 'Show Data'
+- Edit Session Conditions: Select the 'Edit' icon and then press 'Edit Session'
 
 ## Derivative Works
 
