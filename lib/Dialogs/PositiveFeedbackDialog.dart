@@ -50,7 +50,7 @@ class SmileRotationState extends State<SmileRotation> with SingleTickerProviderS
     super.initState();
     animationController = new AnimationController(
       vsync: this,
-      duration: new Duration(seconds: 1),
+      duration: new Duration(seconds: 3),
     );
 
     animation = Tween<double>(begin: 50, end: 150).animate(animationController)            
