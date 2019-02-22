@@ -29,7 +29,7 @@ import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
-import 'package:visual_discrimination_app/Dialogs/PositiveFeedbackDialog.dart';
+import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 
 class TwoPanelSelectField extends StatefulWidget {
   final String uid;
@@ -87,11 +87,11 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
     if (output) {
       nCorrect++;
       player.play(audioPath);
-
-      showFeedback(context);
     } else {
       nIncorrect++;
     }
+
+    showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber) {
 

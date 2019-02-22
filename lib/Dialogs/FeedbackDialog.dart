@@ -27,16 +27,24 @@ import 'package:flutter/material.dart';
 /*
  * Show encouragement
  */
-void showFeedback(BuildContext context) {
+void showFeedback(BuildContext context, bool accurate) {
   Navigator.of(context).push(new MaterialPageRoute<Null>(
     builder: (BuildContext context) {
-      return SmileRotation();
+      return SmileRotation(
+        accurate: accurate,
+      );
     },
     fullscreenDialog: true)
   );
 }
 
 class SmileRotation extends StatefulWidget {
+  final bool accurate;
+
+  SmileRotation({
+    @required this.accurate 
+  });
+
   @override
   SmileRotationState createState() => SmileRotationState();
 }
@@ -78,14 +86,16 @@ class SmileRotationState extends State<SmileRotation> with SingleTickerProviderS
   Widget build(BuildContext context) {
     return new Container(
       alignment: Alignment.center,
-      color: Colors.white,
+      color: widget.accurate ? Colors.white : Colors.black,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10),
         height: 300 * (animation.value / 100.0),
         width: 300 * (animation.value / 100.0),
-        child: Image.asset(
-            'assets/smiley-147407.png', 
+        child: Opacity(
+          child: Image.asset('assets/smiley-147407.png', 
             fit: BoxFit.fitWidth,
+          ),
+          opacity: widget.accurate ? 1.0 : 0.0,
         ),
       )
     );
