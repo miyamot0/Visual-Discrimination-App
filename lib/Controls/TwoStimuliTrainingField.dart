@@ -31,14 +31,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 
-class TwoPanelSelectField extends StatefulWidget {
+class TwoStimuliTrainingField extends StatefulWidget {
   final String uid;
   final String documentId;
   final double discriminabilityDifficulty;
   final int trialNumber;
   final double presentationLength;
 
-  const TwoPanelSelectField(
+  const TwoStimuliTrainingField(
   {
     Key key,
     @required this.uid,
@@ -49,10 +49,10 @@ class TwoPanelSelectField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  TwoPanelSelectFieldState createState() => TwoPanelSelectFieldState();
+  TwoStimuliTrainingFieldState createState() => TwoStimuliTrainingFieldState();
 }
 
-class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTickerProviderStateMixin {
+class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with SingleTickerProviderStateMixin {
 
   /* Layout ref's */
   MediaQueryData mediaData;

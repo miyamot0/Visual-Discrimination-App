@@ -23,7 +23,7 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:visual_discrimination_app/Controls/TwoPanelSelectField.dart';
+import 'package:visual_discrimination_app/Controls/TwoStimuliTrainingField.dart';
 
 class TrialPage extends StatelessWidget {
   final String uid;
@@ -43,7 +43,7 @@ class TrialPage extends StatelessWidget {
   @override
   Widget build (BuildContext ctxt) {
     return new Scaffold(
-      body: TwoPanelSelectField(
+      body: TwoStimuliTrainingField(
         uid: uid,
         documentId: documentId,
         discriminabilityDifficulty: difficultyLevel,
