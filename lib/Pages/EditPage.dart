@@ -141,7 +141,7 @@ class EditPageState extends State<EditPage> {
               Slider(
                 value: trialCount,
                 min: 1.0,
-                max: 10.0,
+                max: 50.0,
                 divisions: 9,
                 label: 'Run $trialCount Trials',
                 onChanged: (double value) {
