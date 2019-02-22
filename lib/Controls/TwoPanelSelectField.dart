@@ -57,7 +57,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
   /* Layout ref's */
   MediaQueryData mediaData;
   static const double padding = 50.0;
-  static double iconWidth = 100.0;
+  static double iconWidth = 0;
 
   /* Audio ref's */
   static const audioPath = "short-success-sound-glockenspiel-treasure-video-game.mp3";
@@ -204,7 +204,7 @@ class TwoPanelSelectFieldState extends State<TwoPanelSelectField> with SingleTic
 
     if (mediaData == null) {
       mediaData = MediaQuery.of(context);
-      iconWidth = mediaData.size.height / 6.0;
+      iconWidth = mediaData.size.height / 4.0;
     }
 
     return Scaffold(
