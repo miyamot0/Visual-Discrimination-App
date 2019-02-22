@@ -140,7 +140,11 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
         children: <Widget>[
           Positioned(
-            child: Text("Practice Trial #$currentTrial of ${widget.trialNumber}"),
+            child: Text("Practice Trial #$currentTrial of ${widget.trialNumber}",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             left: padding,
             top: padding,
           ),

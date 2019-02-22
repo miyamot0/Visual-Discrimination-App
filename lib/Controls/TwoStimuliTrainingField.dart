@@ -212,7 +212,11 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
         children: <Widget>[
           Positioned(
-            child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}"),
+            child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             left: padding,
             top: padding,
           ),
