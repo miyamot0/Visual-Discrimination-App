@@ -62,7 +62,7 @@ import 'package:visual_discrimination_app/Pages/TrialPage.dart';
 class HomePage extends StatelessWidget {
   HomePage({
     this.onSignedOut, 
-    this.uid
+    this.uid,
   });
 
   final VoidCallback onSignedOut;

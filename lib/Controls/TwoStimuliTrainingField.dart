@@ -91,14 +91,19 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       nIncorrect++;
     }
 
+    setState(() {
+      opacityReferent = 0.0;
+      opacitySelection = 0.0; 
+    });
+
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber) {
 
-      setState(() {
-        opacityReferent = 0.0;
-        opacitySelection = 0.0; 
-      });
+      //setState(() {
+      //  opacityReferent = 0.0;
+      //  opacitySelection = 0.0; 
+      //});
 
       await Future.delayed(Duration(seconds: 3))
       .then((asdf) async {
@@ -133,14 +138,17 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
       locationRandomizer = Random().nextInt(100) % 2 == 0;
 
-      if (widget.presentationLength == 0) {
-        setState(() {
-          opacityReferent = 1.0;
-          opacitySelection = 0.0; 
-        });
-      } else {
-        animController.forward(from: 0.0);
-      }
+      await Future.delayed(Duration(seconds: 6))
+      .then((asdf) async {
+        if (widget.presentationLength == 0) {
+          setState(() {
+            opacityReferent = 1.0;
+            opacitySelection = 0.0; 
+          });
+        } else {
+          animController.forward(from: 0.0);
+        }
+      });
     }
   }
 
@@ -266,7 +274,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                 if (widget.presentationLength > 0) {
                   if (animController.isAnimating) return;
                 } else if (widget.presentationLength == 0 && opacitySelection == 0) {
-                  return;                  
+                  return;
                 }
 
                 onSelected(true);
@@ -295,8 +303,9 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                 if (widget.presentationLength > 0) {
                   if (animController.isAnimating) return;
                 } else if (widget.presentationLength == 0 && opacitySelection == 0) {
-                  return;                  
+                  return;
                 }
+
                 onSelected(false);
               },
             ),
