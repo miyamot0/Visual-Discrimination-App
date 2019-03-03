@@ -65,8 +65,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
   /* Referent ref's */
   static final List<Color> possibleColors = [
-    Colors.white, 
-    Colors.redAccent
+    Color.fromRGBO(255, 193, 193, 1),
+    Color.fromRGBO(178, 81,   81, 1),
   ];
   Color colorCorrect = possibleColors[Random().nextInt(possibleColors.length - 1)],
         colorFoil    = possibleColors[Random().nextInt(possibleColors.length - 1)],
