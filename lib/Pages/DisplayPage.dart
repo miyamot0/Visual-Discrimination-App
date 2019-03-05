@@ -33,22 +33,28 @@ class DisplayPage extends StatelessWidget {
   final String uid;
   final String documentId;
   final String participant;
+  final bool training;
+  final int level;
 
   DisplayPage({
     this.uid,
     this.documentId,
     this.participant,
+    @required this.training,
+    this.level,
   });
 
   @override
   Widget build(BuildContext context) {
+    final docAddress = (training) ? "practice${level}stim" : "sessions";
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Participant: $participant'),
       ),
       body: new Center(
         child: StreamBuilder(
-          stream: Firestore.instance.collection('storage/$uid/participants/$documentId/sessions').snapshots(),
+          stream: Firestore.instance.collection('storage/$uid/participants/$documentId/$docAddress').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
             if (!snapshot.hasData) {
@@ -69,7 +75,10 @@ class DisplayPage extends StatelessWidget {
                 xDataStr.add('$session');
                 
                 yData.add((doc.data["correctAnswers"] / doc.data["trialCount"]) * 100.0);
-                yData2.add(doc.data["difficultyLevel"] * 2.0);
+
+                if (!training) {
+                  yData2.add(doc.data["difficultyLevel"] * 2.0);
+                }
 
                 session += 1.0;
               });
@@ -80,16 +89,22 @@ class DisplayPage extends StatelessWidget {
 
                 xDataStr   = xDataStr.skip(start).toList();
                 yData      = yData.skip(start).toList();
-                yData2     = yData2.skip(start).toList();
+
+                if (!training) {
+                  yData2   = yData2.skip(start).toList();
+                }
               }
 
               ChartData chartData = ChartData();
-              chartData.dataRowsLegends = [
+              chartData.dataRowsLegends = (training) ? 
+              [ "Accuracy: $level stimuli" ] :
+              [
                 "Accuracy",
                 "Difficulty"
               ];
-              chartData.dataRows = [
-                yData, 
+              chartData.dataRows = (training) ?
+              [ yData ] :
+              [ yData, 
                 yData2,
               ];
               chartData.xLabels = xDataStr;

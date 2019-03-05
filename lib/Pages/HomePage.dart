@@ -197,6 +197,7 @@ class HomePage extends StatelessWidget {
                                         uid: uid,
                                         documentId: document.documentID,
                                         participant: document.data['participantTag'].toString(),
+                                        training: false,
                                       ),
                                     ),
                                   )
@@ -246,6 +247,26 @@ class HomePage extends StatelessWidget {
                                 },
                               ),
                               StatusDialogItem(
+                                icon: Icons.show_chart,
+                                text: 'Display Practice (1s/1c)',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      DisplayPage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                        participant: document.data['participantTag'].toString(),
+                                        training: true,
+                                        level: 1,
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                },
+                              ),
+                              StatusDialogItem(
                                 icon: Icons.info,
                                 text: 'Practice (1s/2c)',
                                 onPressed: () {
@@ -263,7 +284,27 @@ class HomePage extends StatelessWidget {
                                   .then((result) => Navigator.pop(context)
                                   );
                                 },
-                              )
+                              ),
+                              StatusDialogItem(
+                                icon: Icons.show_chart,
+                                text: 'Display Practice (1s/2c)',
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => 
+                                      DisplayPage(
+                                        uid: uid,
+                                        documentId: document.documentID,
+                                        participant: document.data['participantTag'].toString(),
+                                        training: true,
+                                        level: 2,
+                                      ),
+                                    ),
+                                  )
+                                  .then((result) => Navigator.pop(context)
+                                  );
+                                },
+                              ),
                             ]
                           )
                         );
