@@ -142,7 +142,7 @@ class EditPageState extends State<EditPage> {
                 value: trialCount,
                 min: 1.0,
                 max: 50.0,
-                divisions: 9,
+                divisions: 49,
                 label: 'Run $trialCount Trials',
                 onChanged: (double value) {
                   setState(() {
