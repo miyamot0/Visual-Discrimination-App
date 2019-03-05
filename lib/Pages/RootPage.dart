@@ -48,6 +48,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:visual_discrimination_app/Pages/HomePage.dart';
 import 'package:visual_discrimination_app/Pages/LoginPage.dart';
 import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
@@ -102,10 +103,15 @@ class RootPageState extends State<RootPage> {
           onSignedIn: _signedIn,
         );
       case AuthStatus.signedIn:
-        return HomePage(
-          onSignedOut: _signedOut,
-          uid: uid
-        );
+
+        try {
+          return HomePage(
+            onSignedOut: _signedOut,
+            uid: uid
+          );
+        } on PlatformException catch (e) {
+          return null;
+        }
     }
     return null;
   }
