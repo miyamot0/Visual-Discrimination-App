@@ -76,19 +76,34 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
          opacitySelection = 0.0;
   AnimationController animController;
 
+  int correct1 = 0, 
+      correct2 = 0,
+      incorrect1 = 0, 
+      incorrect2 = 0;
+
   /* Response ref's */
-  int currentTrial = 1,
-      nCorrect = 0,
-      nIncorrect = 0;
+  int currentTrial = 1;//,
+      //nCorrect = 0,
+      //nIncorrect = 0;
 
   void onSelected(bool output) async {
     currentTrial = currentTrial + 1;
 
     if (output) {
-      nCorrect++;
+      //nCorrect++;
       player.play(audioPath);
     } else {
-      nIncorrect++;
+      //nIncorrect++;
+    }
+
+    if (locationRandomizer) {
+      // left side has correct resp
+      correct1   = (output)  ? correct1 + 1 : correct1;
+      incorrect1 = (!output) ? incorrect1 + 1 : incorrect1;
+    } else {
+      // right side has correct resp
+      correct2   = (output)  ? correct2 + 1 : correct2;
+      incorrect2 = (!output) ? incorrect2 + 1 : incorrect2;
     }
 
     setState(() {
@@ -112,12 +127,16 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
           Firestore.instance.runTransaction((Transaction tx) async {
             var replyObj = {
-              'correctAnswers' : nCorrect,
-              'wrongAnswers' : nIncorrect,
-              'trialCount' : widget.trialNumber,
-              'difficultyLevel' : widget.discriminabilityDifficulty,
-              'displayTime' : widget.presentationLength,
-              'sessionDate' : DateTime.now().toString(),
+              'correctAnswers' : (correct1 + correct2), //nCorrect,
+              'wrongAnswers'   : (incorrect1 + incorrect2), //nIncorrect,
+              'correct1'       : correct1,
+              'correct2'       : correct2,
+              'incorrect1'     : incorrect1,
+              'incorrect2'     : incorrect2,
+              'trialCount'     : widget.trialNumber,
+              'difficultyLevel': widget.discriminabilityDifficulty,
+              'displayTime'    : widget.presentationLength,
+              'sessionDate'    : DateTime.now().toString(),
             };
 
             await dbSessions.add(replyObj); 
