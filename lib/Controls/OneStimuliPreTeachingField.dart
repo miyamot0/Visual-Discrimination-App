@@ -23,6 +23,7 @@
 */
 
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
@@ -69,6 +70,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       nCorrect = 0,
       nIncorrect = 0;
 
+  bool locationRandomizer = Random().nextInt(100) % 2 == 0;
+
   void onSelected(bool output) async {
     currentTrial = currentTrial + 1;
 
@@ -114,6 +117,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
         opacityReferent = 1.0;
         opacitySelection = 0.0; 
       });
+
+      locationRandomizer = Random().nextInt(100) % 2 == 0;
     }
   }
 
@@ -198,7 +203,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                 onSelected(true);
               },
             ),
-            left: (mediaData.size.width / 2) - (iconWidth / 2),
+            left: locationRandomizer ? padding : (mediaData.size.width) - padding - iconWidth,
             bottom: padding,
             width: iconWidth,
             height: iconWidth,
