@@ -69,6 +69,7 @@ class DisplayPage extends StatelessWidget {
               List<String> xDataStr = [];
               List<double> yData = [];
               List<double> yData2= [];
+              List<double> ySkipped = [];
               double session = 1.0;
 
               snapshot.data.documents.forEach((doc) {
@@ -78,6 +79,12 @@ class DisplayPage extends StatelessWidget {
 
                 if (!training) {
                   yData2.add(doc.data["difficultyLevel"] * 2.0);
+
+                  if (doc.data["skippedTrials"] != null) {
+                    ySkipped.add(doc.data["skippedTrials"] * 1.0);
+                  } else {
+                    ySkipped.add(0);
+                  }
                 }
 
                 session += 1.0;
@@ -92,6 +99,7 @@ class DisplayPage extends StatelessWidget {
 
                 if (!training) {
                   yData2   = yData2.skip(start).toList();
+                  ySkipped = ySkipped.skip(start).toList();
                 }
               }
 
@@ -100,17 +108,20 @@ class DisplayPage extends StatelessWidget {
               [ "Accuracy: $level stimuli" ] :
               [
                 "Accuracy",
-                "Difficulty"
+                "Difficulty",
+                "Skipped Trials"
               ];
               chartData.dataRows = (training) ?
               [ yData ] :
               [ yData, 
                 yData2,
+                ySkipped
               ];
               chartData.xLabels = xDataStr;
               chartData.dataRowsColors = [
                 Colors.blue,
                 Colors.red,
+                Colors.green
               ];
 
               LineChartOptions chartOptions  = LineChartOptions();
