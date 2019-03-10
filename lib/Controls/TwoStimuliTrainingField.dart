@@ -105,8 +105,6 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       skippedTrials = skippedTrials + 1;
 
       output = false;
-      print('in time out');
-
     } else {
       if (output) {
         player.play(audioPath);
@@ -183,7 +181,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
         timer.cancel();
 
-        timer = new Timer(new Duration(seconds: 5), () {
+        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
           onSelected(null, TimeOutCode.Sample);
         });
       });
@@ -228,7 +226,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       WidgetsBinding.instance.addPostFrameCallback((_)  => animController.forward());
     }
 
-    timer = new Timer(new Duration(seconds: 5), () {
+    timer = new Timer(new Duration(seconds: timeOutPeriod), () {
       onSelected(null, TimeOutCode.Sample);
     });
   }
@@ -295,7 +293,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
                         timer.cancel();
 
-                        timer = new Timer(new Duration(seconds: 5), () {
+                        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
                           onSelected(null, TimeOutCode.Comparison);
                         });
                       });
