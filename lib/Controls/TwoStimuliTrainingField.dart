@@ -31,6 +31,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 
+enum TimeOutCode {
+  Sample,
+  Comparison
+}
+
 class TwoStimuliTrainingField extends StatefulWidget {
   final String uid;
   final String documentId;
@@ -76,34 +81,46 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
          opacitySelection = 0.0;
   AnimationController animController;
 
+  Timer timer;
+  final timeOutPeriod = 30;
+
+  TimeOutCode timeOutCode;
+
   int correct1 = 0, 
       correct2 = 0,
       incorrect1 = 0, 
-      incorrect2 = 0;
+      incorrect2 = 0,
+      skippedTrials = 0;
 
   /* Response ref's */
-  int currentTrial = 1;//,
-      //nCorrect = 0,
-      //nIncorrect = 0;
+  int currentTrial = 1;
 
-  void onSelected(bool output) async {
+  void onSelected(bool output, TimeOutCode code) async {
     currentTrial = currentTrial + 1;
 
-    if (output) {
-      //nCorrect++;
-      player.play(audioPath);
-    } else {
-      //nIncorrect++;
-    }
+    // Cancel timer
+    timer.cancel();
 
-    if (locationRandomizer) {
-      // left side has correct resp
-      correct1   = (output)  ? correct1 + 1 : correct1;
-      incorrect1 = (!output) ? incorrect1 + 1 : incorrect1;
+    if (code != null) {
+      skippedTrials = skippedTrials + 1;
+
+      output = false;
+      print('in time out');
+
     } else {
-      // right side has correct resp
-      correct2   = (output)  ? correct2 + 1 : correct2;
-      incorrect2 = (!output) ? incorrect2 + 1 : incorrect2;
+      if (output) {
+        player.play(audioPath);
+      }
+
+      if (locationRandomizer) {
+        // left side has correct resp
+        correct1   = (output)  ? correct1 + 1 : correct1;
+        incorrect1 = (!output) ? incorrect1 + 1 : incorrect1;
+      } else {
+        // right side has correct resp
+        correct2   = (output)  ? correct2 + 1 : correct2;
+        incorrect2 = (!output) ? incorrect2 + 1 : incorrect2;
+      }
     }
 
     setState(() {
@@ -114,11 +131,6 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber) {
-
-      //setState(() {
-      //  opacityReferent = 0.0;
-      //  opacitySelection = 0.0; 
-      //});
 
       await Future.delayed(Duration(seconds: 3))
       .then((asdf) async {
@@ -133,6 +145,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
               'correct2'       : correct2,
               'incorrect1'     : incorrect1,
               'incorrect2'     : incorrect2,
+              'skippedTrials'  : skippedTrials,
               'trialCount'     : widget.trialNumber,
               'difficultyLevel': widget.discriminabilityDifficulty,
               'displayTime'    : widget.presentationLength,
@@ -162,11 +175,17 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         if (widget.presentationLength == 0) {
           setState(() {
             opacityReferent = 1.0;
-            opacitySelection = 0.0; 
+            opacitySelection = 0.0;
           });
         } else {
           animController.forward(from: 0.0);
         }
+
+        timer.cancel();
+
+        timer = new Timer(new Duration(seconds: 5), () {
+          onSelected(null, TimeOutCode.Sample);
+        });
       });
     }
   }
@@ -194,7 +213,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          animController.reverse();        
+          animController.reverse();
         }
         else if (status == AnimationStatus.dismissed) {
             opacitySelection = 1.0;
@@ -208,6 +227,10 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
       WidgetsBinding.instance.addPostFrameCallback((_)  => animController.forward());
     }
+
+    timer = new Timer(new Duration(seconds: 5), () {
+      onSelected(null, TimeOutCode.Sample);
+    });
   }
 
   @override
@@ -215,6 +238,11 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     if (widget.presentationLength != 0) {
       animController.stop(canceled: true);
       animController.dispose();
+    }
+
+    if (timer.isActive) {
+      timer.cancel();
+      timer = null;
     }
 
     super.dispose();
@@ -264,6 +292,12 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                       setState(() {
                         opacityReferent = 0;
                         opacitySelection = 1;
+
+                        timer.cancel();
+
+                        timer = new Timer(new Duration(seconds: 5), () {
+                          onSelected(null, TimeOutCode.Comparison);
+                        });
                       });
                    }
                 },
@@ -296,7 +330,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                   return;
                 }
 
-                onSelected(true);
+                onSelected(true, null);
               },
             ),
             left: locationRandomizer ? padding : (mediaData.size.width) - padding - iconWidth,
@@ -325,7 +359,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                   return;
                 }
 
-                onSelected(false);
+                onSelected(false, null);
               },
             ),
             left: !locationRandomizer ? padding : (mediaData.size.width) - padding - iconWidth,
