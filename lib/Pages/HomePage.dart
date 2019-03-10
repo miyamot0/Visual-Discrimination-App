@@ -68,6 +68,8 @@ class HomePage extends StatelessWidget {
   final VoidCallback onSignedOut;
   final String uid;
 
+  final trainingSessionCount = 24;
+
   /*
    * Sign out user
    */
@@ -237,7 +239,7 @@ class HomePage extends StatelessWidget {
                                       PracticePage(
                                         uid: uid,
                                         documentId: document.documentID,
-                                        trialCount: 5,
+                                        trialCount: trainingSessionCount,
                                         comparisons: 1,
                                       ),
                                     ),
@@ -276,7 +278,7 @@ class HomePage extends StatelessWidget {
                                       PracticePage(
                                         uid: uid,
                                         documentId: document.documentID,
-                                        trialCount: 5,
+                                        trialCount: trainingSessionCount,
                                         comparisons: 2,
                                       ),
                                     ),
