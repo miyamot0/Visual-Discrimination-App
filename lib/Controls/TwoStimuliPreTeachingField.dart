@@ -171,101 +171,106 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
-        children: <Widget>[
-          Positioned(
-            child: Text("Trial #$currentTrial of ${widget.trialNumber}",
-              style: TextStyle(
-                color: Colors.white,
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
+          children: <Widget>[
+            Positioned(
+              child: Text("Trial #$currentTrial of ${widget.trialNumber}",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
+              left: padding,
+              top: padding,
             ),
-            left: padding,
-            top: padding,
-          ),
-          Positioned(
-            child: Opacity(
-              child: GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
+            Positioned(
+              child: Opacity(
+                child: GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorCorrect,
                     ),
-                    color: colorCorrect,
                   ),
+                  onTap: () {
+                      if (opacityReferent == 1) {
+                        setState(() {
+                          opacityReferent = 0;
+                          opacitySelection = 1;
+                        });
+                      }
+                  },
+                ),
+                opacity: opacityReferent,
+              ),
+              left: (mediaData.size.width / 2) - (iconWidth / 2),
+              top:  (mediaData.size.height / 4) - (iconWidth / 2),
+              width: iconWidth,
+              height: iconWidth,
+            ),
+            Positioned(
+              child: GestureDetector(
+                child: Opacity(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorCorrect,
+                    ),
+                  ),
+                  opacity: opacitySelection,
                 ),
                 onTap: () {
-                   if (opacityReferent == 1) {
-                      setState(() {
-                        opacityReferent = 0;
-                        opacitySelection = 1;
-                      });
-                   }
+                  if (opacitySelection == 0) {
+                    return;
+                  }
+
+                  onSelected(true);
                 },
               ),
-              opacity: opacityReferent,
+              left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
+              bottom: padding,
+              width: iconWidth,
+              height: iconWidth,
             ),
-            left: (mediaData.size.width / 2) - (iconWidth / 2),
-            top:  (mediaData.size.height / 4) - (iconWidth / 2),
-            width: iconWidth,
-            height: iconWidth,
-          ),
-          Positioned(
-            child: GestureDetector(
-              child: Opacity(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
+            Positioned(
+              child: GestureDetector(
+                child: Opacity(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorIncorrect,
                     ),
-                    color: colorCorrect,
                   ),
+                  opacity: opacitySelection,
                 ),
-                opacity: opacitySelection,
+                onTap: () {
+                  if (opacitySelection == 0) {
+                    return;                  
+                  }
+                  onSelected(false);
+                },
               ),
-              onTap: () {
-                if (opacitySelection == 0) {
-                  return;
-                }
-
-                onSelected(true);
-              },
-            ),
-            left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
-            bottom: padding,
-            width: iconWidth,
-            height: iconWidth,
-          ),
-          Positioned(
-            child: GestureDetector(
-              child: Opacity(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
-                    ),
-                    color: colorIncorrect,
-                  ),
-                ),
-                opacity: opacitySelection,
-              ),
-              onTap: () {
-                if (opacitySelection == 0) {
-                  return;                  
-                }
-                onSelected(false);
-              },
-            ),
-            left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
-            bottom: padding,
-            width: iconWidth,
-            height: iconWidth,
-          )
-        ],
+              left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
+              bottom: padding,
+              width: iconWidth,
+              height: iconWidth,
+            )
+          ],
+        ),
       ),
     );
   }

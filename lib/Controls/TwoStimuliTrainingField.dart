@@ -235,112 +235,117 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       colorLerp = Color.lerp(colorCorrect, colorIncorrect, widget.discriminabilityDifficulty / 50.0);
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
-        children: <Widget>[
-          Positioned(
-            child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}",
-              style: TextStyle(
-                color: Colors.white,
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: (currentTrial > widget.trialNumber) ? Center(child: const CircularProgressIndicator(backgroundColor: Colors.black,)) : Stack(        
+          children: <Widget>[
+            Positioned(
+              child: Text("Trial #$currentTrial of ${widget.trialNumber}, Difficulty Level: ${widget.discriminabilityDifficulty}",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
+              left: padding,
+              top: padding,
             ),
-            left: padding,
-            top: padding,
-          ),
-          Positioned(
-            child: Opacity(
-              child: GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
+            Positioned(
+              child: Opacity(
+                child: GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorLerp,
                     ),
-                    color: colorLerp,
                   ),
+                  onTap: () {
+                    if (widget.presentationLength == 0 && opacityReferent == 1) {
+                        setState(() {
+                          opacityReferent = 0;
+                          opacitySelection = 1;
+
+                          timer.cancel();
+
+                          timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+                            onSelected(null, TimeOutCode.Comparison);
+                          });
+                        });
+                    }
+                  },
+                ),
+                opacity: opacityReferent,
+              ),
+              left: (mediaData.size.width / 2) - (iconWidth / 2),
+              top:  (mediaData.size.height / 4) - (iconWidth / 2),
+              width: iconWidth,
+              height: iconWidth,
+            ),
+            Positioned(
+              child: GestureDetector(
+                child: Opacity(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorCorrect,
+                    ),
+                  ),
+                  opacity: opacitySelection,
                 ),
                 onTap: () {
-                   if (widget.presentationLength == 0 && opacityReferent == 1) {
-                      setState(() {
-                        opacityReferent = 0;
-                        opacitySelection = 1;
+                  if (widget.presentationLength > 0) {
+                    if (animController.isAnimating) return;
+                  } else if (widget.presentationLength == 0 && opacitySelection == 0) {
+                    return;
+                  }
 
-                        timer.cancel();
-
-                        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-                          onSelected(null, TimeOutCode.Comparison);
-                        });
-                      });
-                   }
+                  onSelected(true, null);
                 },
               ),
-              opacity: opacityReferent,
+              left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
+              bottom: padding,
+              width: iconWidth,
+              height: iconWidth,
             ),
-            left: (mediaData.size.width / 2) - (iconWidth / 2),
-            top:  (mediaData.size.height / 4) - (iconWidth / 2),
-            width: iconWidth,
-            height: iconWidth,
-          ),
-          Positioned(
-            child: GestureDetector(
-              child: Opacity(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
+            Positioned(
+              child: GestureDetector(
+                child: Opacity(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
+                      color: colorIncorrect,
                     ),
-                    color: colorCorrect,
                   ),
+                  opacity: opacitySelection,
                 ),
-                opacity: opacitySelection,
-              ),
-              onTap: () {
-                if (widget.presentationLength > 0) {
-                  if (animController.isAnimating) return;
-                } else if (widget.presentationLength == 0 && opacitySelection == 0) {
-                  return;
-                }
+                onTap: () {
+                  if (widget.presentationLength > 0) {
+                    if (animController.isAnimating) return;
+                  } else if (widget.presentationLength == 0 && opacitySelection == 0) {
+                    return;
+                  }
 
-                onSelected(true, null);
-              },
-            ),
-            left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
-            bottom: padding,
-            width: iconWidth,
-            height: iconWidth,
-          ),
-          Positioned(
-            child: GestureDetector(
-              child: Opacity(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1.0,
-                    ),
-                    color: colorIncorrect,
-                  ),
-                ),
-                opacity: opacitySelection,
+                  onSelected(false, null);
+                },
               ),
-              onTap: () {
-                if (widget.presentationLength > 0) {
-                  if (animController.isAnimating) return;
-                } else if (widget.presentationLength == 0 && opacitySelection == 0) {
-                  return;
-                }
-
-                onSelected(false, null);
-              },
-            ),
-            left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
-            bottom: padding,
-            width: iconWidth,
-            height: iconWidth,
-          )
-        ],
+              left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
+              bottom: padding,
+              width: iconWidth,
+              height: iconWidth,
+            )
+          ],
+        ),
       ),
     );
   }
