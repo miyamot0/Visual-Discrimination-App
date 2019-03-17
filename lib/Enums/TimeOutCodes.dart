@@ -1,0 +1,4 @@
+enum TimeOutCode {
+  Sample,
+  Comparison
+}

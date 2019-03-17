@@ -29,12 +29,8 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
+import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 import 'package:visual_discrimination_app/Models/TrialElement.dart';
-
-enum TimeOutCode {
-  Sample,
-  Comparison
-}
 
 class TwoStimuliTrainingField extends StatefulWidget {
   final String uid;
@@ -81,6 +77,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
   AnimationController animController;
 
+  /* Time out */
   Timer timer;
   final timeOutPeriod = 30;
 

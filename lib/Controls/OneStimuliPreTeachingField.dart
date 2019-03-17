@@ -29,6 +29,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
+import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 import 'package:visual_discrimination_app/Models/TrialElement.dart';
 
 class OneStimuliPreTeachingField extends StatefulWidget {
@@ -65,6 +66,14 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
 
   AnimationController animController;
 
+  /* Time out codes */
+  Timer timer;
+  final timeOutPeriod = 30;
+
+  TimeOutCode timeOutCode;
+
+  int skippedTrials = 0;
+
   /* Response ref's */
   int currentTrial = 1,
       s1c1 = 0,
@@ -72,7 +81,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       s2c1 = 0,
       s2c2 = 0;
 
-  void onSelected(bool output) async {
+  void onSelected(bool output, TimeOutCode code) async {
 
     if (trialList[currentTrial - 1].currentColor == Colors.blue) {
       if (trialList[currentTrial - 1].isOnLeftSide) 
@@ -88,8 +97,16 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
 
     currentTrial = currentTrial + 1;
 
-    if (output) 
+    // Cancel timer
+    timer.cancel();
+
+    if (code != null) {
+      skippedTrials = skippedTrials + 1;
+
+      output = false;
+    } else if (output) {
       player.play(audioPath);
+    }
 
     setState(() {
       opacityReferent = 0.0;
@@ -114,6 +131,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
               's1c2' : s1c2,
               's2c1' : s2c1,
               's2c2' : s2c2,
+              'skippedTrials'  : skippedTrials,
               'trialCount' : widget.trialNumber,
               'sessionDate' : DateTime.now().toString(),
             };
@@ -133,6 +151,12 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
           opacitySelection = 0.0; 
         });
       });
+
+      timer.cancel();
+
+      timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+        onSelected(false, TimeOutCode.Sample);
+      });
     }
   }
 
@@ -151,6 +175,10 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
     trialList.addAll(List.filled(widget.trialNumber ~/ 4, TrialElement(currentColor: Colors.yellow, isOnLeftSide: false)));
 
     trialList.shuffle();
+
+    timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+      onSelected(false, TimeOutCode.Sample);
+    });
   }
 
   @override
@@ -192,10 +220,16 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                   ),
                   onTap: () {
                     if (opacityReferent == 1) {
-                        setState(() {
-                          opacityReferent = 0;
-                          opacitySelection = 1;
+                      setState(() {
+                        opacityReferent = 0;
+                        opacitySelection = 1;
+
+                        timer.cancel();
+
+                        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+                          onSelected(false, TimeOutCode.Comparison);
                         });
+                      });
                     }
                   },
                 ),
@@ -225,7 +259,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                     return;
                   }
 
-                  onSelected(true);
+                  onSelected(true, null);
                 },
               ),
               left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
