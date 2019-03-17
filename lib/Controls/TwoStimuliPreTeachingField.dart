@@ -160,12 +160,15 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
 
   @override
   Widget build(BuildContext context) {
-    colorCorrect   = trialList[currentTrial - 1].currentColor;
-    colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
-
     if (mediaData == null) {
       mediaData = MediaQuery.of(context);
       iconWidth = mediaData.size.height / 4.0;
+    }
+
+    // Hacky workaround
+    if (currentTrial < widget.trialNumber) {
+      colorCorrect   = trialList[currentTrial - 1].currentColor;
+      colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
     }
 
     return Scaffold(
