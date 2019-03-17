@@ -91,17 +91,15 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
     if (output) 
       player.play(audioPath);
 
+    setState(() {
+      opacityReferent = 0.0;
+      opacitySelection = 0.0; 
+    });
+
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber) {
-
-      setState(() {
-        opacityReferent = 0.0;
-        opacitySelection = 0.0; 
-      });
-
-      await Future.delayed(Duration(seconds: 3))
-      .then((asdf) async {
+      await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice1stim');
 
@@ -220,7 +218,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
               ),
               onTap: () {
                 if (opacitySelection == 0) {
-                  return;                  
+                  return;
                 }
 
                 onSelected(true);

@@ -22,7 +22,6 @@
     THE SOFTWARE.
 */
 
-import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
@@ -30,6 +29,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
+import 'package:visual_discrimination_app/Models/TrialElement.dart';
 
 class TwoStimuliPreTeachingField extends StatefulWidget {
   final String uid;
@@ -59,51 +59,63 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   static const audioPath = "short-success-sound-glockenspiel-treasure-video-game.mp3";
   static AudioCache player = new AudioCache();
 
-  /* Referent ref's */
-  static final List<Color> possibleColors = [
-    Colors.blue, 
-    Colors.yellow
-  ];
-  Color colorCorrect = possibleColors[Random().nextInt(possibleColors.length - 1)],
-        colorFoil    = possibleColors[Random().nextInt(possibleColors.length - 1)],
-        colorLerp;
-  bool locationRandomizer = Random().nextInt(100) % 2 == 0;
+  List<TrialElement> trialList = [];
+
+  Color color1 = Colors.blue,
+        color2 = Colors.yellow,
+        colorCorrect,
+        colorIncorrect;
+
   double opacityReferent  = 1.0,
          opacitySelection = 0.0;
 
   /* Response ref's */
   int currentTrial = 1,
-      nCorrect = 0,
-      nIncorrect = 0;
+      s1c1 = 0,
+      s1c2 = 0,
+      s2c1 = 0,
+      s2c2 = 0;
 
   void onSelected(bool output) async {
+    if (trialList[currentTrial - 1].currentColor == color1) {
+      if (trialList[currentTrial - 1].isOnLeftSide) 
+        s1c1 = (output) ? s1c1 + 1 : s1c1;
+      else
+        s1c2 = (output) ? s1c2 + 1 : s1c2;
+    } else {
+      if (trialList[currentTrial - 1].isOnLeftSide) 
+        s2c1 = (output) ? s2c1 + 1 : s2c1;
+      else
+        s2c2 = (output) ? s2c2 + 1 : s2c2;
+    }
+
     currentTrial = currentTrial + 1;
 
-    if (output) {
-      nCorrect++;
+    if (output) 
       player.play(audioPath);
-    } else {
-      nIncorrect++;
-    }
+
+    setState(() {
+      opacityReferent = 0.0;
+      opacitySelection = 0.0; 
+    });
 
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber) {
-
-      setState(() {
-        opacityReferent = 0.0;
-        opacitySelection = 0.0; 
-      });
-
-      await Future.delayed(Duration(seconds: 3))
-      .then((asdf) async {
+      await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice2stim');
 
           Firestore.instance.runTransaction((Transaction tx) async {
+            var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
+
             var replyObj = {
               'correctAnswers' : nCorrect,
-              'wrongAnswers' : nIncorrect,
+              'wrongAnswers' : widget.trialNumber - nCorrect,
+              's1c1' : s1c1,
+              's1c2' : s1c2,
+              's2c1' : s2c1,
+              's2c2' : s2c2,
               'trialCount' : widget.trialNumber,
               'sessionDate' : DateTime.now().toString(),
             };
@@ -117,18 +129,14 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         }
       });
     } else {
-      colorCorrect = possibleColors[Random().nextInt(possibleColors.length)];
-      colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        setState(() {
+          colorCorrect   = trialList[currentTrial - 1].currentColor;
+          colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
 
-      while (colorCorrect == colorFoil) {
-        colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
-      }
-
-      locationRandomizer = Random().nextInt(100) % 2 == 0;
-
-      setState(() {
-        opacityReferent = 1.0;
-        opacitySelection = 0.0; 
+          opacityReferent = 1.0;
+          opacitySelection = 0.0; 
+        });
       });
     }
   }
@@ -139,19 +147,21 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   void initState()
   {
     super.initState();
-
     opacityReferent = 1.0;
     opacitySelection = 0.0;
+
+    trialList.addAll(List.filled(widget.trialNumber ~/ 4, TrialElement(currentColor: color1, isOnLeftSide: true)));
+    trialList.addAll(List.filled(widget.trialNumber ~/ 4, TrialElement(currentColor: color1, isOnLeftSide: false)));
+    trialList.addAll(List.filled(widget.trialNumber ~/ 4, TrialElement(currentColor: color2, isOnLeftSide: true)));
+    trialList.addAll(List.filled(widget.trialNumber ~/ 4, TrialElement(currentColor: color2, isOnLeftSide: false)));
+
+    trialList.shuffle();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    while (colorCorrect == colorFoil) {
-      colorFoil = possibleColors[Random().nextInt(possibleColors.length)];
-    }
-
-    colorLerp = colorCorrect;
+    colorCorrect   = trialList[currentTrial - 1].currentColor;
+    colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
 
     if (mediaData == null) {
       mediaData = MediaQuery.of(context);
@@ -180,7 +190,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                       color: Colors.black,
                       width: 1.0,
                     ),
-                    color: colorLerp,
+                    color: colorCorrect,
                   ),
                 ),
                 onTap: () {
@@ -215,13 +225,13 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
               ),
               onTap: () {
                 if (opacitySelection == 0) {
-                  return;                  
+                  return;
                 }
 
                 onSelected(true);
               },
             ),
-            left: locationRandomizer ? padding : (mediaData.size.width) - padding - iconWidth,
+            left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
             bottom: padding,
             width: iconWidth,
             height: iconWidth,
@@ -235,7 +245,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                       color: Colors.black,
                       width: 1.0,
                     ),
-                    color: colorFoil,
+                    color: colorIncorrect,
                   ),
                 ),
                 opacity: opacitySelection,
@@ -247,7 +257,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                 onSelected(false);
               },
             ),
-            left: !locationRandomizer ? padding : (mediaData.size.width) - padding - iconWidth,
+            left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
             bottom: padding,
             width: iconWidth,
             height: iconWidth,
