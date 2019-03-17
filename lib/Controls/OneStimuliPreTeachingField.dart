@@ -58,7 +58,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
   static const audioPath = "short-success-sound-glockenspiel-treasure-video-game.mp3";
   static AudioCache player = new AudioCache();
 
-  Color colorCorrect = Colors.blue;
+//  Color colorCorrect;
+  List<Color> colorList;
 
   double opacityReferent  = 1.0,
          opacitySelection = 0.0;
@@ -71,6 +72,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       nIncorrect = 0;
 
   bool locationRandomizer = Random().nextInt(100) % 2 == 0;
+
+  // TODO Add in timer
 
   void onSelected(bool output) async {
     currentTrial = currentTrial + 1;
@@ -130,6 +133,10 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
     super.initState();
     opacityReferent = 1.0;
     opacitySelection = 0.0;
+
+    colorList = List.filled(11, Colors.blue, growable: true);
+    colorList.addAll(List.filled(11, Colors.yellow));
+    colorList.shuffle();
   }
 
   @override
@@ -162,7 +169,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                       color: Colors.black,
                       width: 1.0,
                     ),
-                    color: colorCorrect,
+                    color: colorList[currentTrial - 1],
                   ),
                 ),
                 onTap: () {
@@ -190,7 +197,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                       color: Colors.black,
                       width: 1.0,
                     ),
-                    color: colorCorrect,
+                    color: colorList[currentTrial - 1],
                   ),
                 ),
                 opacity: opacitySelection,
