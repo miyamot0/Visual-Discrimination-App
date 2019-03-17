@@ -174,7 +174,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         timer.cancel();
 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-          onSelected(null, TimeOutCode.Sample);
+          onSelected(false, TimeOutCode.Sample);
         });
       });
     }
@@ -197,7 +197,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     trialList.shuffle();
 
     timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-      onSelected(null, TimeOutCode.Sample);
+      onSelected(false, TimeOutCode.Sample);
     });
   }
 
@@ -270,7 +270,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                           timer.cancel();
 
                           timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-                            onSelected(null, TimeOutCode.Comparison);
+                            onSelected(false, TimeOutCode.Comparison);
                           });
                         });
                     }
