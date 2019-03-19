@@ -79,7 +79,11 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       s1c1 = 0,
       s1c2 = 0,
       s2c1 = 0,
-      s2c2 = 0;
+      s2c2 = 0,
+      corLeft = 0,
+      corRght = 0,
+      errLeft = 0,
+      errRght = 0;
 
   void onSelected(bool output, TimeOutCode code) async {
 
@@ -94,6 +98,11 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       else
         s2c2 = (output) ? s2c2 + 1 : s2c2;
     }
+
+    corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
+    errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
+    corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
+    errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
 
     currentTrial = currentTrial + 1;
 
@@ -131,6 +140,10 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
               's1c2' : s1c2,
               's2c1' : s2c1,
               's2c2' : s2c2,
+              'corLeft' : corLeft,
+              'corRght' : corRght,
+              'errLeft' : errLeft,
+              'errRght' : errRght,
               'skippedTrials'  : skippedTrials,
               'trialCount' : widget.trialNumber,
               'sessionDate' : DateTime.now().toString(),

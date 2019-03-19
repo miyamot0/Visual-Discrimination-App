@@ -90,7 +90,11 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       s1c1 = 0,
       s1c2 = 0,
       s2c1 = 0,
-      s2c2 = 0;
+      s2c2 = 0,
+      corLeft = 0,
+      corRght = 0,
+      errLeft = 0,
+      errRght = 0;
 
   void onSelected(bool output, TimeOutCode code) async {
     if (trialList[currentTrial - 1].currentColor == color1) {
@@ -104,6 +108,11 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       else
         s2c2 = (output) ? s2c2 + 1 : s2c2;
     }
+
+    corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
+    errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
+    corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
+    errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
 
     currentTrial = currentTrial + 1;
 
@@ -141,6 +150,10 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
               's1c2'           : s1c2,
               's2c1'           : s2c1,
               's2c2'           : s2c2,
+              'corLeft'        : corLeft,
+              'corRght'        : corRght,
+              'errLeft'        : errLeft,
+              'errRght'        : errRght,
               'trialCount'     : widget.trialNumber,
               'skippedTrials'  : skippedTrials,
               'difficultyLevel': widget.discriminabilityDifficulty,
