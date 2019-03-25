@@ -158,17 +158,17 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
         }
       });
     } else {
-      Future.delayed(const Duration(milliseconds: 2000), () {
+      await Future.delayed(Duration(seconds: 6)).then((asdf) async {
         setState(() {
           opacityReferent = 1.0;
           opacitySelection = 0.0; 
         });
-      });
 
-      timer.cancel();
+        timer.cancel();
 
-      timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-        onSelected(false, TimeOutCode.Sample);
+        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+          onSelected(false, TimeOutCode.Sample);
+        });
       });
     }
   }

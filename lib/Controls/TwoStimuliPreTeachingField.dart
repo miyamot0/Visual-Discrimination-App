@@ -160,20 +160,17 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         }
       });
     } else {
-      Future.delayed(const Duration(milliseconds: 2000), () {
+      await Future.delayed(Duration(seconds: 6)).then((asdf) async {
         setState(() {
-          colorCorrect   = trialList[currentTrial - 1].currentColor;
-          colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
-
           opacityReferent = 1.0;
           opacitySelection = 0.0; 
         });
-      });
 
-      timer.cancel();
+        timer.cancel();
 
-      timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-        onSelected(false, TimeOutCode.Sample);
+        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+          onSelected(false, TimeOutCode.Sample);
+        });
       });
     }
   }
