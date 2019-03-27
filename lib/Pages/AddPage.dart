@@ -40,8 +40,9 @@ class AddPage extends StatefulWidget {
 
 class AddPageState extends State<AddPage> {
   double difficultyValue = 1.0;
-  double trialCount = 5.0;
+  double trialCount = 24.0;
   double displaySeconds = 1;
+  double itiSeconds = 2.0;
 
   final nameController = TextEditingController();
   final descController = TextEditingController();
@@ -68,6 +69,7 @@ class AddPageState extends State<AddPage> {
           'trialNumbers' : trialCount,
           'difficultyLevel' : difficultyValue,
           'displayTime' : displaySeconds,
+          'itiTime' : itiSeconds,
         };
 
         await dbReplies.add(replyObj); 
@@ -132,6 +134,27 @@ class AddPageState extends State<AddPage> {
                 onChanged: (double value) {
                   setState(() {
                     trialCount = num.parse(value.toStringAsFixed(2));
+                  });
+                },
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: 25.0,
+                  top: 25.0,
+                ),
+                child: Text(
+                  "Select InterTrial Interval"
+                ),
+              ),
+              Slider(
+                value: itiSeconds,
+                min: 0.0,
+                max: 5.0,
+                divisions: 5,
+                label: 'ITI = $itiSeconds Seconds',
+                onChanged: (double value) {
+                  setState(() {
+                    itiSeconds = num.parse(value.toStringAsFixed(2));
                   });
                 },
               ),
