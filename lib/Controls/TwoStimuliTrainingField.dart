@@ -82,6 +82,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
   /* Time out */
   Timer timer;
   final timeOutPeriod = 30;
+  final killSession = 6;
 
   TimeOutCode timeOutCode;
 
@@ -99,25 +100,6 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       errRght = 0;
 
   void onSelected(bool output, TimeOutCode code) async {
-    if (trialList[currentTrial - 1].currentColor == color1) {
-      if (trialList[currentTrial - 1].isOnLeftSide) 
-        s1c1 = (output) ? s1c1 + 1 : s1c1;
-      else
-        s1c2 = (output) ? s1c2 + 1 : s1c2;
-    } else {
-      if (trialList[currentTrial - 1].isOnLeftSide) 
-        s2c1 = (output) ? s2c1 + 1 : s2c1;
-      else
-        s2c2 = (output) ? s2c2 + 1 : s2c2;
-    }
-
-    corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
-    errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
-    corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
-    errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
-
-    currentTrial = currentTrial + 1;
-
     // Cancel timer
     timer.cancel();
 
@@ -129,6 +111,28 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       player.play(audioPath);
     }
 
+    if (code == null) {
+      if (trialList[currentTrial - 1].currentColor == color1) {
+        if (trialList[currentTrial - 1].isOnLeftSide) 
+          s1c1 = (output) ? s1c1 + 1 : s1c1;
+        else
+          s1c2 = (output) ? s1c2 + 1 : s1c2;
+      } else {
+        if (trialList[currentTrial - 1].isOnLeftSide) 
+          s2c1 = (output) ? s2c1 + 1 : s2c1;
+        else
+          s2c2 = (output) ? s2c2 + 1 : s2c2;
+      }
+
+      corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
+      errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
+      corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
+      errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
+
+      currentTrial = currentTrial + 1;
+    }
+
+    // blank out
     setState(() {
       opacityReferent = 0.0;
       opacitySelection = 0.0; 
@@ -136,7 +140,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
     showFeedback(context, output);
 
-    if (currentTrial > widget.trialNumber) {
+    if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
@@ -171,7 +175,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
           Navigator.pop(context);
         }
       });
-    } else {
+    } else if (code == null) {
       await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
         if (widget.presentationLength == 0) {
             setState(() {
@@ -184,6 +188,25 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         } else {
           animController.forward(from: 0.0);
         }
+
+        timer.cancel();
+
+        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+          onSelected(false, TimeOutCode.Sample);
+        });
+      });
+    } else {
+      // Bump to end
+      var currentTrialElement = trialList[currentTrial - 1];
+      trialList.add(currentTrialElement);
+      trialList.removeAt(currentTrial - 1);
+
+      // Good to proceed
+      await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
+        setState(() {
+          opacityReferent = 1.0;
+          opacitySelection = 0.0; 
+        });
 
         timer.cancel();
 
