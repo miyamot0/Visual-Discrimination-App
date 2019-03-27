@@ -35,6 +35,7 @@ class EditPage extends StatefulWidget {
   final double difficultyValue;
   final double trialCount;
   final double displaySeconds;
+  final double itiSeconds;
 
   EditPage({
     this.uid,
@@ -44,6 +45,7 @@ class EditPage extends StatefulWidget {
     this.difficultyValue,
     this.trialCount,
     this.displaySeconds,
+    this.itiSeconds,
   });
 
   @override
@@ -52,6 +54,7 @@ class EditPage extends StatefulWidget {
     trialCount,
     displaySeconds,
     descriptionTag,
+    itiSeconds
   );
 }
 
@@ -59,6 +62,7 @@ class EditPageState extends State<EditPage> {
   double difficultyValue;
   double trialCount;
   double displaySeconds;
+  double itiSeconds;
   String descTag;
 
   final textEditController = TextEditingController();
@@ -72,6 +76,7 @@ class EditPageState extends State<EditPage> {
     this.trialCount,
     this.displaySeconds,
     this.descTag,
+    this.itiSeconds,
   );
 
   void updateStateRemotely() async {
@@ -82,6 +87,7 @@ class EditPageState extends State<EditPage> {
           'difficultyLevel' : difficultyValue,
           'displayTime' : displaySeconds,
           'descriptionTag' : textEditController.text,
+          'itiTime' : itiSeconds,
         },
         merge: true,
       );
@@ -147,6 +153,24 @@ class EditPageState extends State<EditPage> {
                 onChanged: (double value) {
                   setState(() {
                     trialCount = num.parse(value.toStringAsFixed(2));
+
+                    updateStateRemotely();
+                  });
+                },
+              ),
+              Text(
+                "Select ITI Length",
+                style: textStyle,
+              ),
+              Slider(
+                value: itiSeconds,
+                min: 0.0,
+                max: 5.0,
+                divisions: 5,
+                label: 'ITI = $itiSeconds Seconds',
+                onChanged: (double value) {
+                  setState(() {
+                    itiSeconds = num.parse(value.toStringAsFixed(2));
 
                     updateStateRemotely();
                   });

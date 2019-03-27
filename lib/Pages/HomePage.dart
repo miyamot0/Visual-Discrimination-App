@@ -222,6 +222,7 @@ class HomePage extends StatelessWidget {
                                         displaySeconds: (document['displayTime'] as num).toDouble(),
                                         participantTag: document['participantTag'].toString(),
                                         descriptionTag: document['descriptionTag'].toString(),
+                                        itiSeconds: (document['itiTime'] as num).toDouble(),
                                       ),
                                     ),
                                   )
