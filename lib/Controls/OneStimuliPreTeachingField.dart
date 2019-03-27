@@ -75,7 +75,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
 
   TimeOutCode timeOutCode;
 
-  int skippedTrials = 0;
+  int skippedTrials = 0,
+      incorrectTrials = 0;
 
   /* Response ref's */
   int currentTrial = 1,
@@ -91,6 +92,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
   void onSelected(bool output, TimeOutCode code) async {
     // Cancel timer
     timer.cancel();
+
+    incorrectTrials = (!output) ? incorrectTrials + 1 : incorrectTrials;
 
     // Did we time out?
     if (code != null) {
@@ -143,7 +146,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
 
             var replyObj = {
               'correctAnswers' : nCorrect,
-              'wrongAnswers' : widget.trialNumber - nCorrect,
+              'wrongAnswers' : incorrectTrials,
               's1c1' : s1c1,
               's1c2' : s1c2,
               's2c1' : s2c1,

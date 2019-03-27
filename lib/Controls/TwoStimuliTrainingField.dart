@@ -86,7 +86,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
   TimeOutCode timeOutCode;
 
-  int skippedTrials = 0;
+  int skippedTrials = 0,
+      incorrectTrials = 0;
 
   /* Response ref's */
   int currentTrial = 1,
@@ -102,6 +103,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
   void onSelected(bool output, TimeOutCode code) async {
     // Cancel timer
     timer.cancel();
+
+    incorrectTrials = (!output) ? incorrectTrials + 1 : incorrectTrials;
 
     if (code != null) {
       skippedTrials = skippedTrials + 1;
@@ -151,7 +154,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
             var replyObj = {
               'correctAnswers' : nCorrect,
-              'wrongAnswers'   : widget.trialNumber - nCorrect,
+              'wrongAnswers'   : incorrectTrials,
               's1c1'           : s1c1,
               's1c2'           : s1c2,
               's2c1'           : s2c1,
