@@ -125,9 +125,9 @@ class AddPageState extends State<AddPage> {
               ),
               Slider(
                 value: trialCount,
-                min: 1.0,
-                max: 10.0,
-                divisions: 9,
+                min: 4.0,
+                max: 48.0,
+                divisions: 11,
                 label: 'Run $trialCount Trials',
                 onChanged: (double value) {
                   setState(() {
