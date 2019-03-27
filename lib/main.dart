@@ -48,12 +48,23 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Auth/Auth.dart';
 import 'Auth/AuthProvider.dart';
 import 'Pages/RootPage.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  SystemChrome.setEnabledSystemUIOverlays([]).then((_) 
+  {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight, 
+      DeviceOrientation.landscapeLeft]).then((_)
+      {
+        runApp(new MyApp());
+      }); 
+  });
+}
 
 class MyApp extends StatelessWidget {
   @override
