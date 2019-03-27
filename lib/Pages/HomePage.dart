@@ -67,7 +67,6 @@ class HomePage extends StatelessWidget {
 
   final VoidCallback onSignedOut;
   final String uid;
-
   final trainingSessionCount = 24;
 
   /*
@@ -155,6 +154,7 @@ class HomePage extends StatelessWidget {
                           difficultyLevel: (document['difficultyLevel'] as num).toDouble(),
                           trialCount: (document['trialNumbers'] as num).toDouble().round(),
                           presentationLength: (document['displayTime'] as num).toDouble(),
+                          iti: (document['itiTime'] as num).toInt(),
                         ),
                       ),
                     ),
@@ -242,6 +242,7 @@ class HomePage extends StatelessWidget {
                                         documentId: document.documentID,
                                         trialCount: trainingSessionCount,
                                         comparisons: 1,
+                                        iti: (document['itiTime'] as num).toInt(),
                                       ),
                                     ),
                                   )
@@ -281,6 +282,7 @@ class HomePage extends StatelessWidget {
                                         documentId: document.documentID,
                                         trialCount: trainingSessionCount,
                                         comparisons: 2,
+                                        iti: (document['itiTime'] as num).toInt(),
                                       ),
                                     ),
                                   )

@@ -31,12 +31,14 @@ class PracticePage extends StatelessWidget {
   final String documentId;
   final int trialCount;
   final int comparisons;
+  final int iti;
 
   PracticePage({
     @required this.uid,
     @required this.documentId,
     @required this.trialCount, 
-    @required this.comparisons
+    @required this.comparisons,
+    @required this.iti,
   });
 
   @override
@@ -46,10 +48,12 @@ class PracticePage extends StatelessWidget {
         uid: uid,
         documentId: documentId,
         trialNumber: trialCount,
+        itiSeconds: iti,
       ) : TwoStimuliPreTeachingField(
         uid: uid,
         documentId: documentId,
         trialNumber: trialCount,
+        itiSeconds: iti,
       ),
     );
   }

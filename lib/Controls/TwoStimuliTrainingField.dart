@@ -38,6 +38,7 @@ class TwoStimuliTrainingField extends StatefulWidget {
   final double discriminabilityDifficulty;
   final int trialNumber;
   final double presentationLength;
+  final int itiSeconds;
 
   const TwoStimuliTrainingField(
   {
@@ -47,6 +48,7 @@ class TwoStimuliTrainingField extends StatefulWidget {
     @required this.discriminabilityDifficulty,
     @required this.trialNumber,
     @required this.presentationLength,
+    @required this.itiSeconds,
   }) : super(key: key);
 
   @override
@@ -170,8 +172,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         }
       });
     } else {
-
-      await Future.delayed(Duration(seconds: 6)).then((asdf) async {
+      await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
         if (widget.presentationLength == 0) {
             setState(() {
               colorCorrect   = trialList[currentTrial - 1].currentColor;

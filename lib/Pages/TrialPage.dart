@@ -31,13 +31,15 @@ class TrialPage extends StatelessWidget {
   final double difficultyLevel;
   final int trialCount;
   final double presentationLength;
+  final int iti;
 
   TrialPage({
-    this.uid,
-    this.documentId,
-    this.difficultyLevel, 
-    this.trialCount, 
-    this.presentationLength
+    @required this.uid,
+    @required this.documentId,
+    @required this.difficultyLevel, 
+    @required this.trialCount, 
+    @required this.presentationLength,
+    @required this.iti,
   });
 
   @override
@@ -49,6 +51,7 @@ class TrialPage extends StatelessWidget {
         discriminabilityDifficulty: difficultyLevel,
         trialNumber: trialCount,
         presentationLength: presentationLength,
+        itiSeconds: iti,
       ),
     );
   }

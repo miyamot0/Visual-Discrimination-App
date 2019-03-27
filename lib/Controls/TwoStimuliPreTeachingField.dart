@@ -36,6 +36,7 @@ class TwoStimuliPreTeachingField extends StatefulWidget {
   final String uid;
   final String documentId;
   final int trialNumber;
+  final int itiSeconds;
 
   const TwoStimuliPreTeachingField(
   {
@@ -43,6 +44,7 @@ class TwoStimuliPreTeachingField extends StatefulWidget {
     @required this.uid,
     @required this.documentId,
     @required this.trialNumber,
+    @required this.itiSeconds,
   }) : super(key: key);
 
   @override
@@ -160,7 +162,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         }
       });
     } else {
-      await Future.delayed(Duration(seconds: 6)).then((asdf) async {
+      await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
         setState(() {
           opacityReferent = 1.0;
           opacitySelection = 0.0; 
