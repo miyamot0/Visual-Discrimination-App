@@ -179,7 +179,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         }
       });
     } else if (code == null) {
-      await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
+      await Future.delayed(Duration(seconds: 2 + widget.itiSeconds)).then((asdf) async {
         if (widget.presentationLength == 0) {
             setState(() {
               colorCorrect   = trialList[currentTrial - 1].currentColor;
