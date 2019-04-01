@@ -170,7 +170,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       });
     } else if (code == null) {
       // Good to proceed
-      await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
+      await Future.delayed(Duration(seconds: 2 + widget.itiSeconds)).then((asdf) async {
         setState(() {
           opacityReferent = 1.0;
           opacitySelection = 0.0; 
