@@ -79,21 +79,29 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
 
   TimeOutCode timeOutCode;
 
-  int skippedTrials = 0,
+  int skippedTrials   = 0,
       incorrectTrials = 0;
 
   /* Response ref's */
-  int currentTrial = 1,
-      s1c1 = 0,
-      s1c2 = 0,
-      s2c1 = 0,
-      s2c2 = 0,
-      corLeft = 0,
-      corRght = 0,
-      errLeft = 0,
-      errRght = 0;
+  int currentTrial  = 1,
+      s1c1          = 0,
+      s1c2          = 0,
+      s2c1          = 0,
+      s2c2          = 0,
+      corLeft       = 0,
+      corRght       = 0,
+      errLeft       = 0,
+      errRght       = 0,
+      s1corL        = 0,
+      s1corR        = 0,
+      s1errL        = 0,
+      s1errR        = 0,
+      s2corL        = 0,
+      s2corR        = 0,
+      s2errL        = 0,
+      s2errR        = 0;
 
-  void onSelected(bool output, TimeOutCode code) async {
+  void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
     // Cancel timer
     timer.cancel();
 
@@ -126,6 +134,17 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
       errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
 
+              //Correct      // Side            // Stimuli
+      s1corR =  output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1corR + 1 : s1corR;
+      s1errR = !output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1errR + 1 : s1errR;
+      s1corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1corL + 1 : s1corL;
+      s1errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1errL + 1 : s1errL;
+
+      s2corR =  output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corR + 1 : s2corR;
+      s2errR = !output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errR + 1 : s2errR;
+      s2corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corL + 1 : s2corL;
+      s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
+
       currentTrial = currentTrial + 1;
     }
 
@@ -146,19 +165,27 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
             var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
 
             var replyObj = {
-              'correctAnswers' : nCorrect,
-              'wrongAnswers' : incorrectTrials,
-              's1c1' : s1c1,
-              's1c2' : s1c2,
-              's2c1' : s2c1,
-              's2c2' : s2c2,
-              'corLeft' : corLeft,
-              'corRght' : corRght,
-              'errLeft' : errLeft,
-              'errRght' : errRght,
-              'skippedTrials'  : skippedTrials,
-              'trialCount' : widget.trialNumber,
-              'sessionDate' : DateTime.now().toString(),
+              'correctAnswers'  : nCorrect,
+              'wrongAnswers'    : incorrectTrials,
+              's1c1'            : s1c1,
+              's1c2'            : s1c2,
+              's2c1'            : s2c1,
+              's2c2'            : s2c2,
+              'corLeft'         : corLeft,
+              'corRght'         : corRght,
+              'errLeft'         : errLeft,
+              'errRght'         : errRght,
+              's1corL'          : s1corL,
+              's1corR'          : s1corR,
+              's1errL'          : s1errL,
+              's1errR'          : s1errR,
+              's2corL'          : s2corL,
+              's2corR'          : s2corR,
+              's2errL'          : s2errL,
+              's2errR'          : s2errR,
+              'skippedTrials'   : skippedTrials,
+              'trialCount'      : widget.trialNumber,
+              'sessionDate'     : DateTime.now().toString(),
             };
 
             await dbSessions.add(replyObj); 
@@ -179,7 +206,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         timer.cancel();
 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-          onSelected(false, TimeOutCode.Sample);
+          onSelected(false, TimeOutCode.Sample, null);
         });
       });
     } else {
@@ -198,7 +225,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         timer.cancel();
 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-          onSelected(false, TimeOutCode.Sample);
+          onSelected(false, TimeOutCode.Sample, null);
         });
       });
     }
@@ -221,7 +248,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
     trialList.shuffle();
 
     timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-      onSelected(false, TimeOutCode.Sample);
+      onSelected(false, TimeOutCode.Sample, null);
     });
   }
 
@@ -276,7 +303,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                           timer.cancel();
 
                           timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-                            onSelected(false, TimeOutCode.Comparison);
+                            onSelected(false, TimeOutCode.Comparison, null);
                           });
                         });
                       }
@@ -308,7 +335,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                     return;
                   }
 
-                  onSelected(true, null);
+                  onSelected(true, null, trialList[currentTrial - 1].isOnLeftSide);
                 },
               ),
               left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
@@ -334,7 +361,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                   if (opacitySelection == 0) {
                     return;                  
                   }
-                  onSelected(false, null);
+                  onSelected(false, null, !trialList[currentTrial - 1].isOnLeftSide);
                 },
               ),
               left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
