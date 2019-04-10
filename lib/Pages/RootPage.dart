@@ -109,7 +109,7 @@ class RootPageState extends State<RootPage> {
             onSignedOut: _signedOut,
             uid: uid
           );
-        } on PlatformException catch (e) {
+        } on PlatformException catch (_) {
           return null;
         }
     }
