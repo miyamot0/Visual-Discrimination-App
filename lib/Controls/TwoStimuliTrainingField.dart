@@ -91,16 +91,24 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
   /* Response ref's */
   int currentTrial = 1,
-      s1c1 = 0,
-      s1c2 = 0,
-      s2c1 = 0,
-      s2c2 = 0,
+      s1c1    = 0,
+      s1c2    = 0,
+      s2c1    = 0,
+      s2c2    = 0,
       corLeft = 0,
       corRght = 0,
       errLeft = 0,
-      errRght = 0;
+      errRght = 0,
+      s1corL = 0,
+      s1corR = 0,
+      s1errL = 0,
+      s1errR = 0,
+      s2corL = 0,
+      s2corR = 0,
+      s2errL = 0,
+      s2errR = 0;
 
-  void onSelected(bool output, TimeOutCode code) async {
+  void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
     // Cancel timer
     timer.cancel();
 
@@ -131,6 +139,19 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
       corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
       errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
+
+      print(isComparisonOnLeft);
+
+      /*
+      
+      s1corR
+      s1errL
+      s1errR
+      s2corL
+      s2corR
+      s2errL
+      s2errR
+      */
 
       currentTrial = currentTrial + 1;
     }
@@ -195,7 +216,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         timer.cancel();
 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-          onSelected(false, TimeOutCode.Sample);
+          onSelected(false, TimeOutCode.Sample, null);
         });
       });
     } else {
@@ -214,7 +235,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         timer.cancel();
 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-          onSelected(false, TimeOutCode.Sample);
+          onSelected(false, TimeOutCode.Sample, null);
         });
       });
     }
@@ -237,7 +258,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     trialList.shuffle();
 
     timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-      onSelected(false, TimeOutCode.Sample);
+      onSelected(false, TimeOutCode.Sample, null);
     });
   }
 
@@ -310,7 +331,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                           timer.cancel();
 
                           timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-                            onSelected(false, TimeOutCode.Comparison);
+                            onSelected(false, TimeOutCode.Comparison, null);
                           });
                         });
                     }
@@ -344,7 +365,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                     return;
                   }
 
-                  onSelected(true, null);
+                  onSelected(true, null, trialList[currentTrial - 1].isOnLeftSide);
                 },
               ),
               left: trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
@@ -373,7 +394,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                     return;
                   }
 
-                  onSelected(false, null);
+                  onSelected(false, null, !trialList[currentTrial - 1].isOnLeftSide);
                 },
               ),
               left: !trialList[currentTrial - 1].isOnLeftSide ? padding : (mediaData.size.width) - padding - iconWidth,
