@@ -95,10 +95,14 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       s1c2 = 0,
       s2c1 = 0,
       s2c2 = 0,
-      corLeft = 0,
-      corRght = 0,
-      errLeft = 0,
-      errRght = 0;
+      corLeft1 = 0,
+      corRght1 = 0,
+      corLeft2 = 0,
+      corRght2 = 0,
+      errLeft1 = 0,
+      errRght1 = 0,
+      errLeft2 = 0,
+      errRght2 = 0;
 
   void onSelected(bool output, TimeOutCode code) async {
     // Cancel timer
@@ -127,10 +131,15 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
           s2c2 = (output) ? s2c2 + 1 : s2c2;
       }
 
-      corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
-      errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
-      corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
-      errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
+      corLeft1 =  output & trialList[currentTrial - 1].isOnLeftSide  ?  corLeft1 + 1 : corLeft1;      
+      errLeft1 = !output & trialList[currentTrial - 1].isOnLeftSide  ?  errLeft1 + 1 : errLeft1;
+      corLeft2 =  output & !trialList[currentTrial - 1].isOnLeftSide ?  corLeft2 + 1 : corLeft2;      
+      errLeft2 = !output & !trialList[currentTrial - 1].isOnLeftSide ?  errLeft2 + 1 : errLeft2;
+
+      corRght1 =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght1 + 1 : corRght1;
+      errRght1 = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght1 + 1 : errRght1;
+      corRght2 =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght2 + 1 : corRght2;
+      errRght2 = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght2 + 1 : errRght2;
 
       currentTrial = currentTrial + 1;
     }
@@ -159,10 +168,14 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
               's1c2'           : s1c2,
               's2c1'           : s2c1,
               's2c2'           : s2c2,
-              'corLeft'        : corLeft,
-              'corRght'        : corRght,
-              'errLeft'        : errLeft,
-              'errRght'        : errRght,
+              'corLeft1'       : corLeft1,
+              'corRght1'       : corRght1,
+              'errLeft1'       : errLeft1,
+              'errRght1'       : errRght1,
+              'corLeft2'       : corLeft2,
+              'corRght2'       : corRght2,
+              'errLeft2'       : errLeft2,
+              'errRght2'       : errRght2,
               'trialCount'     : widget.trialNumber,
               'skippedTrials'  : skippedTrials,
               'difficultyLevel': widget.discriminabilityDifficulty,
