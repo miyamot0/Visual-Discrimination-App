@@ -15,13 +15,13 @@ enum ComparisonStimuli {
   ComparisonTwo,
 }
 
-class LatencyElement {
+class ResultElement {
   ErrorStatus error;
   SampleStimuli sample;
   ComparisonStimuli comparison;
   int seconds;
 
-  LatencyElement({
+  ResultElement({
     @required this.error,
     @required this.sample,
     @required this.comparison,

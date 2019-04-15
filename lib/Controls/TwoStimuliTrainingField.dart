@@ -59,7 +59,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
   static AudioCache player = new AudioCache();
 
   List<TrialElement> trialList = [];
-  List<LatencyElement> latencyList = [];
+  List<ResultElement> latencyList = [];
 
   Color color1 = Color.fromRGBO(255, 193, 193, 1),
         color2 = Color.fromRGBO(178, 81,   81, 1),
@@ -148,7 +148,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
 
       latencyList.add(
-        LatencyElement(
+        ResultElement(
           sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
           comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
           error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,

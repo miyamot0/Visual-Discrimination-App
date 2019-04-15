@@ -55,7 +55,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   static AudioCache player = new AudioCache();
 
   List<TrialElement> trialList = [];
-  List<LatencyElement> latencyList = [];
+  List<ResultElement> latencyList = [];
 
   Color color1 = Colors.blue,
         color2 = Colors.yellow,
@@ -142,7 +142,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
 
       latencyList.add(
-        LatencyElement(
+        ResultElement(
           sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
           comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
           error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
