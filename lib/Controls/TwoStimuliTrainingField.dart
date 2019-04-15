@@ -169,14 +169,6 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
     if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
 
-      double correctAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Correct).toList()
-        .map((elem) => elem.seconds).toList())
-        .average();
-
-      double incorrectAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
-        .map((elem) => elem.seconds).toList())
-        .average();
-
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
@@ -209,8 +201,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
               'difficultyLevel'  : widget.discriminabilityDifficulty,
               'displayTime'      : widget.presentationLength,
               'sessionDate'      : DateTime.now().toString(),
-              'latencyCorrect'   : correctAve ?? 0,
-              'latencyIncorrect' : incorrectAve ?? 0,
+              'latencyCorrect'   : getAverageLatencyCorrect(latencyList),
+              'latencyIncorrect' : getAverageLatencyIncorrect(latencyList),
             };
 
             await dbSessions.add(replyObj); 

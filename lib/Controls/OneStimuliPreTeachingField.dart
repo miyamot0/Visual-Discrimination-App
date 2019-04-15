@@ -161,14 +161,6 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
 
     if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
 
-      double correctAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Correct).toList()
-        .map((elem) => elem.seconds).toList())
-        .average();
-
-      double incorrectAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
-        .map((elem) => elem.seconds).toList())
-        .average();
-
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice1stim');
@@ -178,29 +170,29 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
             var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
 
             var replyObj = {
-              'correctAnswers'  : nCorrect,
-              'wrongAnswers'    : incorrectTrials,
-              's1c1'            : s1c1,
-              's1c2'            : s1c2,
-              's2c1'            : s2c1,
-              's2c2'            : s2c2,
-              'corLeft'         : corLeft,
-              'corRght'         : corRght,
-              'errLeft'         : errLeft,
-              'errRght'         : errRght,
-              's1corL'          : s1corL,
-              's1corR'          : s1corR,
-              's1errL'          : s1errL,
-              's1errR'          : s1errR,
-              's2corL'          : s2corL,
-              's2corR'          : s2corR,
-              's2errL'          : s2errL,
-              's2errR'          : s2errR,
-              'skippedTrials'   : skippedTrials,
-              'trialCount'      : widget.trialNumber,
-              'sessionDate'     : DateTime.now().toString(),
-              'latencyCorrect'  : correctAve ?? 0,
-              'latencyIncorrect': incorrectAve ?? 0,
+              'correctAnswers'   : nCorrect,
+              'wrongAnswers'     : incorrectTrials,
+              's1c1'             : s1c1,
+              's1c2'             : s1c2,
+              's2c1'             : s2c1,
+              's2c2'             : s2c2,
+              'corLeft'          : corLeft,
+              'corRght'          : corRght,
+              'errLeft'          : errLeft,
+              'errRght'          : errRght,
+              's1corL'           : s1corL,
+              's1corR'           : s1corR,
+              's1errL'           : s1errL,
+              's1errR'           : s1errR,
+              's2corL'           : s2corL,
+              's2corR'           : s2corR,
+              's2errL'           : s2errL,
+              's2errR'           : s2errR,
+              'skippedTrials'    : skippedTrials,
+              'trialCount'       : widget.trialNumber,
+              'sessionDate'      : DateTime.now().toString(),
+              'latencyCorrect'   : getAverageLatencyCorrect(latencyList),
+              'latencyIncorrect' : getAverageLatencyIncorrect(latencyList),
             };
 
             await dbSessions.add(replyObj); 

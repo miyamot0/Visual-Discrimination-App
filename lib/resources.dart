@@ -20,3 +20,6 @@ export 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 export 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 export 'package:visual_discrimination_app/Models/TrialElement.dart';
 export 'package:visual_discrimination_app/Models/LatencyElement.dart';
+
+// Helpers
+export 'package:visual_discrimination_app/Utilities/Scoring.dart';
