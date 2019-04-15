@@ -27,10 +27,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:queries/collections.dart';
+import 'package:queries/queries.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 import 'package:visual_discrimination_app/Models/TrialElement.dart';
+import 'package:visual_discrimination_app/Models/LatencyElement.dart';
 
 class TwoStimuliTrainingField extends StatefulWidget {
   final String uid;
@@ -67,6 +70,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
   static AudioCache player = new AudioCache();
 
   List<TrialElement> trialList = [];
+  List<LatencyElement> latencyList = [];
 
   Color color1 = Color.fromRGBO(255, 193, 193, 1),
         color2 = Color.fromRGBO(178, 81,   81, 1),
@@ -85,6 +89,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
   final killSession = 6;
 
   TimeOutCode timeOutCode;
+  DateTime pre, post;
 
   int skippedTrials   = 0,
       incorrectTrials = 0;
@@ -109,6 +114,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       s2errR        = 0;
 
   void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
+    post = DateTime.now();
+
     // Cancel timer
     timer.cancel();
 
@@ -151,6 +158,15 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
       s2corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corL + 1 : s2corL;
       s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
 
+      latencyList.add(
+        LatencyElement(
+          sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
+          comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
+          error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
+          seconds: post.difference(pre).inSeconds,
+        )
+      );
+
       currentTrial = currentTrial + 1;
     }
 
@@ -163,6 +179,18 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
+
+      double correctAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Correct).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
+      double incorrectAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
+      correctAve = correctAve ?? 0;
+      incorrectAve = incorrectAve ?? 0;
+
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
@@ -195,6 +223,8 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
               'difficultyLevel': widget.discriminabilityDifficulty,
               'displayTime'    : widget.presentationLength,
               'sessionDate'    : DateTime.now().toString(),
+              'latencyCorrect' : correctAve,
+              'latencyIncorrect':incorrectAve,
             };
 
             await dbSessions.add(replyObj); 
@@ -330,16 +360,18 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
                   ),
                   onTap: () {
                     if (widget.presentationLength == 0 && opacityReferent == 1) {
-                        setState(() {
-                          opacityReferent = 0;
-                          opacitySelection = 1;
+                      setState(() {
+                        opacityReferent = 0;
+                        opacitySelection = 1;
 
-                          timer.cancel();
+                        timer.cancel();
 
-                          timer = new Timer(new Duration(seconds: timeOutPeriod), () {
-                            onSelected(false, TimeOutCode.Comparison, null);
-                          });
+                        timer = new Timer(new Duration(seconds: timeOutPeriod), () {
+                          onSelected(false, TimeOutCode.Comparison, null);
                         });
+
+                        pre = DateTime.now();
+                      });
                     }
                   },
                 ),
