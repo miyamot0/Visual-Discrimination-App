@@ -22,9 +22,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:visual_discrimination_app/Controls/OneStimuliPreTeachingField.dart';
-import 'package:visual_discrimination_app/Controls/TwoStimuliPreTeachingField.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class PracticePage extends StatelessWidget {
   final String uid;

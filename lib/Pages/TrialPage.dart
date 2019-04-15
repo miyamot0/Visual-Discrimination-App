@@ -22,8 +22,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:visual_discrimination_app/Controls/TwoStimuliTrainingField.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class TrialPage extends StatelessWidget {
   final String uid;

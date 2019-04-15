@@ -47,11 +47,7 @@
     THE SOFTWARE.
 */
 
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
-import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
-import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 /*
  * Validate email address

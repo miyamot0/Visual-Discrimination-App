@@ -22,8 +22,8 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:visual_discrimination_app/resources.dart';
+
 import 'package:flutter_charts/flutter_charts.dart';
 
 import 'dart:ui' as ui show Paint;

@@ -47,17 +47,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
-import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
-import 'package:visual_discrimination_app/Dialogs/StatusDialog.dart';
-import 'package:visual_discrimination_app/Pages/AddPage.dart';
-import 'package:visual_discrimination_app/Pages/DisplayPage.dart';
-import 'package:visual_discrimination_app/Pages/EditPage.dart';
-import 'package:visual_discrimination_app/Pages/PracticePage.dart';
-import 'package:visual_discrimination_app/Pages/TrialPage.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
@@ -67,8 +57,7 @@ class HomePage extends StatelessWidget {
 
   final VoidCallback onSignedOut;
   final String uid;
-  // TODO: 24
-  final trainingSessionCount = 4;
+  final trainingSessionCount = 24;
 
   /*
    * Sign out user

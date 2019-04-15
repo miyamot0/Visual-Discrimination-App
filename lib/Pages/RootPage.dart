@@ -47,11 +47,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
-import 'package:visual_discrimination_app/Pages/HomePage.dart';
-import 'package:visual_discrimination_app/Pages/LoginPage.dart';
-import 'package:visual_discrimination_app/Auth/AuthProvider.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class RootPage extends StatefulWidget {
   @override

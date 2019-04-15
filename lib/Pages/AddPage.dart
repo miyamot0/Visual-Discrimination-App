@@ -22,10 +22,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart' show PlatformException;
-import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class AddPage extends StatefulWidget {
   final String uid;

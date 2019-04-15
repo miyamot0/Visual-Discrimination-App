@@ -47,8 +47,7 @@
     THE SOFTWARE.
 */
 
-import 'package:flutter/material.dart';
-import 'package:visual_discrimination_app/Auth/Auth.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 enum AuthStatus {
   notDetermined,
