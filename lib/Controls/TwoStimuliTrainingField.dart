@@ -171,22 +171,21 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
+
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
 
           Firestore.instance.runTransaction((Transaction tx) async {
 
-            var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
-
             var replyObj = {
-              'correctAnswers'   : nCorrect,
-              'wrongAnswers'     : incorrectTrials,
+              'correctAnswers'   : getNumberCorrect(latencyList),
+              'wrongAnswers'     : getNumberIncorrect(latencyList),
               's1c1'             : s1c1,
               's1c2'             : s1c2,
               's2c1'             : s2c1,
               's2c2'             : s2c2,
-              'corLeft'          : corLeft,
+              'corLeft'          : getLeftCorrect(latencyList),
               'corRght'          : corRght,
-              'errLeft'          : errLeft,
+              'errLeft'          : getLeftIncorrect(latencyList),
               'errRght'          : errRght,
               's1corL'           : s1corL,
               's1corR'           : s1corR,
