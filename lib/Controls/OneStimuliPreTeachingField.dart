@@ -27,10 +27,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:queries/collections.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 import 'package:visual_discrimination_app/Models/TrialElement.dart';
+import 'package:visual_discrimination_app/Models/LatencyElement.dart';
 
 class OneStimuliPreTeachingField extends StatefulWidget {
   final String uid;
@@ -62,6 +64,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
   static AudioCache player = new AudioCache();
 
   List<TrialElement> trialList = [];
+  List<LatencyElement> latencyList = [];
 
   double opacityReferent  = 1.0,
          opacitySelection = 0.0;
@@ -74,6 +77,7 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
   final killSession = 6;
 
   TimeOutCode timeOutCode;
+  DateTime pre, post;
 
   int skippedTrials   = 0,
       incorrectTrials = 0;
@@ -100,6 +104,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
   void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
     // Cancel timer
     timer.cancel();
+
+    post = DateTime.now();
 
     incorrectTrials = (!output) ? incorrectTrials + 1 : incorrectTrials;
 
@@ -143,6 +149,15 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
       s2corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == Colors.yellow) ? s2corL + 1 : s2corL;
       s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == Colors.yellow) ? s2errL + 1 : s2errL;
 
+      latencyList.add(
+        LatencyElement(
+          sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
+          comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
+          error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
+          seconds: post.difference(pre).inSeconds,
+        )
+      );
+
       currentTrial = currentTrial + 1;
     }
 
@@ -155,6 +170,15 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
+
+      double correctAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Correct).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
+      double incorrectAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice1stim');
@@ -185,6 +209,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
               'skippedTrials'   : skippedTrials,
               'trialCount'      : widget.trialNumber,
               'sessionDate'     : DateTime.now().toString(),
+              'latencyCorrect'  : correctAve ?? 0,
+              'latencyIncorrect': incorrectAve ?? 0,
             };
 
             await dbSessions.add(replyObj); 
@@ -300,6 +326,8 @@ class OneStimuliPreTeachingFieldState extends State<OneStimuliPreTeachingField> 
                         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
                           onSelected(false, TimeOutCode.Comparison, null);
                         });
+
+                        pre = DateTime.now();
                       });
                     }
                   },

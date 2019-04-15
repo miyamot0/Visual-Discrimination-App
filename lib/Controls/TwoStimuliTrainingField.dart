@@ -28,7 +28,6 @@ import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:queries/collections.dart';
-import 'package:queries/queries.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
@@ -188,9 +187,6 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
         .map((elem) => elem.seconds).toList())
         .average();
 
-      correctAve = correctAve ?? 0;
-      incorrectAve = incorrectAve ?? 0;
-
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/sessions');
@@ -200,31 +196,31 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
             var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
 
             var replyObj = {
-              'correctAnswers' : nCorrect,
-              'wrongAnswers'   : incorrectTrials,
-              's1c1'           : s1c1,
-              's1c2'           : s1c2,
-              's2c1'           : s2c1,
-              's2c2'           : s2c2,
-              'corLeft'        : corLeft,
-              'corRght'        : corRght,
-              'errLeft'        : errLeft,
-              'errRght'        : errRght,
-              's1corL'         : s1corL,
-              's1corR'         : s1corR,
-              's1errL'         : s1errL,
-              's1errR'         : s1errR,
-              's2corL'         : s2corL,
-              's2corR'         : s2corR,
-              's2errL'         : s2errL,
-              's2errR'         : s2errR,
-              'trialCount'     : widget.trialNumber,
-              'skippedTrials'  : skippedTrials,
-              'difficultyLevel': widget.discriminabilityDifficulty,
-              'displayTime'    : widget.presentationLength,
-              'sessionDate'    : DateTime.now().toString(),
-              'latencyCorrect' : correctAve,
-              'latencyIncorrect':incorrectAve,
+              'correctAnswers'   : nCorrect,
+              'wrongAnswers'     : incorrectTrials,
+              's1c1'             : s1c1,
+              's1c2'             : s1c2,
+              's2c1'             : s2c1,
+              's2c2'             : s2c2,
+              'corLeft'          : corLeft,
+              'corRght'          : corRght,
+              'errLeft'          : errLeft,
+              'errRght'          : errRght,
+              's1corL'           : s1corL,
+              's1corR'           : s1corR,
+              's1errL'           : s1errL,
+              's1errR'           : s1errR,
+              's2corL'           : s2corL,
+              's2corR'           : s2corR,
+              's2errL'           : s2errL,
+              's2errR'           : s2errR,
+              'trialCount'       : widget.trialNumber,
+              'skippedTrials'    : skippedTrials,
+              'difficultyLevel'  : widget.discriminabilityDifficulty,
+              'displayTime'      : widget.presentationLength,
+              'sessionDate'      : DateTime.now().toString(),
+              'latencyCorrect'   : correctAve ?? 0,
+              'latencyIncorrect' : incorrectAve ?? 0,
             };
 
             await dbSessions.add(replyObj); 

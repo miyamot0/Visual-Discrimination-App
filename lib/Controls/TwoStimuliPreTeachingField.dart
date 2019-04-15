@@ -27,10 +27,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:queries/collections.dart';
 import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
 import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
 import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
 import 'package:visual_discrimination_app/Models/TrialElement.dart';
+import 'package:visual_discrimination_app/Models/LatencyElement.dart';
 
 class TwoStimuliPreTeachingField extends StatefulWidget {
   final String uid;
@@ -63,6 +65,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   static AudioCache player = new AudioCache();
 
   List<TrialElement> trialList = [];
+  List<LatencyElement> latencyList = [];
 
   Color color1 = Colors.blue,
         color2 = Colors.yellow,
@@ -78,6 +81,7 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   final killSession = 6;
 
   TimeOutCode timeOutCode;
+  DateTime pre, post;
 
   int skippedTrials   = 0,
       incorrectTrials = 0;
@@ -102,6 +106,8 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       s2errR        = 0;
 
   void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
+    post = DateTime.now();
+
     // Cancel timer
     timer.cancel();
 
@@ -145,6 +151,15 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       s2corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corL + 1 : s2corL;
       s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
 
+      latencyList.add(
+        LatencyElement(
+          sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
+          comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
+          error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
+          seconds: post.difference(pre).inSeconds,
+        )
+      );
+
       currentTrial = currentTrial + 1;
     }
 
@@ -157,6 +172,15 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
     showFeedback(context, output);
 
     if (currentTrial > widget.trialNumber || skippedTrials >= killSession) {
+
+      double correctAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Correct).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
+      double incorrectAve = Collection(latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
+        .map((elem) => elem.seconds).toList())
+        .average();
+
       await Future.delayed(Duration(seconds: 3)).then((asdf) async {
         try {
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice2stim');
@@ -165,27 +189,29 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
             var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
 
             var replyObj = {
-              'correctAnswers'  : nCorrect,
-              'wrongAnswers'    : incorrectTrials,
-              's1c1'            : s1c1,
-              's1c2'            : s1c2,
-              's2c1'            : s2c1,
-              's2c2'            : s2c2,
-              'corLeft'         : corLeft,
-              'corRght'         : corRght,
-              'errLeft'         : errLeft,
-              'errRght'         : errRght,
-              's1corL'          : s1corL,
-              's1corR'          : s1corR,
-              's1errL'          : s1errL,
-              's1errR'          : s1errR,
-              's2corL'          : s2corL,
-              's2corR'          : s2corR,
-              's2errL'          : s2errL,
-              's2errR'          : s2errR,
-              'skippedTrials'   : skippedTrials,
-              'trialCount'      : widget.trialNumber,
-              'sessionDate'     : DateTime.now().toString(),
+              'correctAnswers'   : nCorrect,
+              'wrongAnswers'     : incorrectTrials,
+              's1c1'             : s1c1,
+              's1c2'             : s1c2,
+              's2c1'             : s2c1,
+              's2c2'             : s2c2,
+              'corLeft'          : corLeft,
+              'corRght'          : corRght,
+              'errLeft'          : errLeft,
+              'errRght'          : errRght,
+              's1corL'           : s1corL,
+              's1corR'           : s1corR,
+              's1errL'           : s1errL,
+              's1errR'           : s1errR,
+              's2corL'           : s2corL,
+              's2corR'           : s2corR,
+              's2errL'           : s2errL,
+              's2errR'           : s2errR,
+              'skippedTrials'    : skippedTrials,
+              'trialCount'       : widget.trialNumber,
+              'sessionDate'      : DateTime.now().toString(),
+              'latencyCorrect'   : correctAve ?? 0,
+              'latencyIncorrect' : incorrectAve ?? 0,
             };
 
             await dbSessions.add(replyObj); 
@@ -227,6 +253,8 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
         timer = new Timer(new Duration(seconds: timeOutPeriod), () {
           onSelected(false, TimeOutCode.Sample, null);
         });
+
+        pre = DateTime.now();
       });
     }
   }
@@ -305,6 +333,8 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
                           timer = new Timer(new Duration(seconds: timeOutPeriod), () {
                             onSelected(false, TimeOutCode.Comparison, null);
                           });
+
+                          pre = DateTime.now();
                         });
                       }
                   },
