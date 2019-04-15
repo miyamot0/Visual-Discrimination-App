@@ -27,6 +27,7 @@ This project is a derivative work of an earlier project and uses licensed softwa
 - cloud_firestore - Copyright 2017 The Chromium Authors (BSD-3). [Github](https://github.com/flutter/plugins)
 - audioplayers - Copyright 2017 Luan Nico (MIT). [Github](https://github.com/luanpotter/audioplayers)
 - flutter_charts - Copyright 2017 Milan Zimmermann (BSD-2). [Github](https://github.com/mzimmerm/flutter_charts)
+- queries - Copyright (c) 2014, Andrew Mezoni (BSD-3). [Github](https://github.com/mezoni/queries)
 
 ## Assets
 
@@ -51,4 +52,4 @@ xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOption
 
 ## License
 
-Copyright 2018, Shawn P. Gilroy (sgilroy1@lsu.edu)/Louisiana State University - MIT
+Copyright 2018-2019, Shawn P. Gilroy (sgilroy1@lsu.edu)/Louisiana State University - MIT
