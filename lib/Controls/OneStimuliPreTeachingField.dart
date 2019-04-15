@@ -22,17 +22,7 @@
     THE SOFTWARE.
 */
 
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
-import 'package:audioplayers/audio_cache.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:queries/collections.dart';
-import 'package:visual_discrimination_app/Dialogs/ErrorDialog.dart';
-import 'package:visual_discrimination_app/Dialogs/FeedbackDialog.dart';
-import 'package:visual_discrimination_app/Enums/TimeOutCodes.dart';
-import 'package:visual_discrimination_app/Models/TrialElement.dart';
-import 'package:visual_discrimination_app/Models/LatencyElement.dart';
+import 'package:visual_discrimination_app/resources.dart';
 
 class OneStimuliPreTeachingField extends StatefulWidget {
   final String uid;
