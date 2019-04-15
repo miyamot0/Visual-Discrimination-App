@@ -67,7 +67,8 @@ class HomePage extends StatelessWidget {
 
   final VoidCallback onSignedOut;
   final String uid;
-  final trainingSessionCount = 24;
+  // TODO: 24
+  final trainingSessionCount = 4;
 
   /*
    * Sign out user

@@ -73,35 +73,16 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
   TimeOutCode timeOutCode;
   DateTime pre, post;
 
-  int skippedTrials   = 0,
-      incorrectTrials = 0;
+  int skippedTrials   = 0;
 
   /* Response ref's */
-  int currentTrial  = 1,
-      s1c1          = 0,
-      s1c2          = 0,
-      s2c1          = 0,
-      s2c2          = 0,
-      corLeft       = 0,
-      corRght       = 0,
-      errLeft       = 0,
-      errRght       = 0,
-      s1corL        = 0,
-      s1corR        = 0,
-      s1errL        = 0,
-      s1errR        = 0,
-      s2corL        = 0,
-      s2corR        = 0,
-      s2errL        = 0,
-      s2errR        = 0;
+  int currentTrial  = 1;
 
   void onSelected(bool output, TimeOutCode code, bool isComparisonOnLeft) async {
     post = DateTime.now();
 
     // Cancel timer
     timer.cancel();
-
-    incorrectTrials = (!output) ? incorrectTrials + 1 : incorrectTrials;
 
     if (code != null) {
       skippedTrials = skippedTrials + 1;
@@ -113,37 +94,9 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
 
     if (code == null) {
     // Session is good to proceed
-      if (trialList[currentTrial - 1].currentColor == color1) {
-        if (trialList[currentTrial - 1].isOnLeftSide) 
-          s1c1 = (output) ? s1c1 + 1 : s1c1;
-        else
-          s1c2 = (output) ? s1c2 + 1 : s1c2;
-      } else {
-        if (trialList[currentTrial - 1].isOnLeftSide) 
-          s2c1 = (output) ? s2c1 + 1 : s2c1;
-        else
-          s2c2 = (output) ? s2c2 + 1 : s2c2;
-      }
-
-      corLeft =  output & trialList[currentTrial - 1].isOnLeftSide ?  corLeft + 1 : corLeft;
-      errLeft = !output & trialList[currentTrial - 1].isOnLeftSide ?  errLeft + 1 : errLeft;
-      corRght =  output & !trialList[currentTrial - 1].isOnLeftSide ? corRght + 1 : corRght;
-      errRght = !output & !trialList[currentTrial - 1].isOnLeftSide ? errRght + 1 : errRght;
-
-              //Correct      // Side            // Stimuli
-      s1corR =  output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1corR + 1 : s1corR;
-      s1errR = !output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1errR + 1 : s1errR;
-      s1corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1corL + 1 : s1corL;
-      s1errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color1) ? s1errL + 1 : s1errL;
-
-      s2corR =  output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corR + 1 : s2corR;
-      s2errR = !output & !isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errR + 1 : s2errR;
-      s2corL =  output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2corL + 1 : s2corL;
-      s2errL = !output &  isComparisonOnLeft & (trialList[currentTrial - 1].currentColor == color2) ? s2errL + 1 : s2errL;
-
       latencyList.add(
         ResultElement(
-          sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
+          sample: (trialList[currentTrial - 1].currentColor == color1) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
           comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
           error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
           seconds: post.difference(pre).inMilliseconds,
@@ -168,27 +121,22 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
           CollectionReference dbSessions = Firestore.instance.collection('storage/${widget.uid}/participants/${widget.documentId}/practice2stim');
 
           Firestore.instance.runTransaction((Transaction tx) async {
-            var nCorrect = s1c1 + s1c2 + s2c1 + s2c2;
 
-            var replyObj = {
-              'correctAnswers'   : nCorrect,
-              'wrongAnswers'     : incorrectTrials,
-              's1c1'             : s1c1,
-              's1c2'             : s1c2,
-              's2c1'             : s2c1,
-              's2c2'             : s2c2,
-              'corLeft'          : corLeft,
-              'corRght'          : corRght,
-              'errLeft'          : errLeft,
-              'errRght'          : errRght,
-              's1corL'           : s1corL,
-              's1corR'           : s1corR,
-              's1errL'           : s1errL,
-              's1errR'           : s1errR,
-              's2corL'           : s2corL,
-              's2corR'           : s2corR,
-              's2errL'           : s2errL,
-              's2errR'           : s2errR,
+            Map<String, Object> replyObj = {
+              'correctAnswers'   : getNumberCorrect(latencyList),
+              'wrongAnswers'     : getNumberIncorrect(latencyList),
+              's1c1'             : getS1C1(latencyList),
+              's1c2'             : getS1C2(latencyList),
+              's2c1'             : getS2C1(latencyList),
+              's2c2'             : getS2C2(latencyList),
+              'corLeft'          : getLeftCorrect(latencyList),
+              'corRght'          : getRightCorrect(latencyList),
+              'errLeft'          : getLeftIncorrect(latencyList),
+              'errRght'          : getRightIncorrect(latencyList),
+              's1errL'           : getS1C1e(latencyList),
+              's1errR'           : getS1C2e(latencyList),
+              's2errL'           : getS2C1e(latencyList),
+              's2errR'           : getS2C2e(latencyList),
               'skippedTrials'    : skippedTrials,
               'trialCount'       : widget.trialNumber,
               'sessionDate'      : DateTime.now().toString(),

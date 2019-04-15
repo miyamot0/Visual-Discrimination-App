@@ -129,7 +129,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
 
           Firestore.instance.runTransaction((Transaction tx) async {
 
-            var replyObj = {
+            Map<String, Object> replyObj = {
               'correctAnswers'   : getNumberCorrect(latencyList),
               'wrongAnswers'     : getNumberIncorrect(latencyList),
               's1c1'             : getS1C1(latencyList),
