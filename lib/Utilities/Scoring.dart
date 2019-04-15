@@ -52,6 +52,20 @@ double getLeftIncorrect(List<ResultElement> _latencyList) {
                        .toDouble();
 }
 
+/// Get total number correct responses on right
+double getRightCorrect(List<ResultElement> _latencyList) {
+    return _latencyList.where((elem) => elem.error == ErrorStatus.Correct && elem.comparison == ComparisonStimuli.ComparisonTwo)
+                       .length
+                       .toDouble();
+}
+
+/// Get total number incorrect responses on left
+double getRightIncorrect(List<ResultElement> _latencyList) {
+    return _latencyList.where((elem) => elem.error == ErrorStatus.Incorrect && elem.comparison == ComparisonStimuli.ComparisonTwo)
+                       .length
+                       .toDouble();
+}
+
 /* Latency measures */
 
 /// Get average latency for correct responses
@@ -74,4 +88,77 @@ double getAverageLatencyIncorrect(List<ResultElement> _latencyList) {
     return Collection(_latencyList.where((elem) => elem.error == ErrorStatus.Incorrect).toList()
     .map((elem) => elem.seconds).toList())
     .average() / 1000 ?? 0;
+}
+
+/* Conditional Measures */
+
+double getS1C1(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliOne && 
+                                      elem.comparison == ComparisonStimuli.ComparisonOne &&
+                                      elem.error      == ErrorStatus.Correct)
+                    .length
+                    .toDouble();
+}
+
+double getS1C2(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliOne && 
+                                      elem.comparison == ComparisonStimuli.ComparisonTwo &&
+                                      elem.error      == ErrorStatus.Correct)
+                    .length
+                    .toDouble();
+}
+
+double getS2C1(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliTwo && 
+                                      elem.comparison == ComparisonStimuli.ComparisonOne &&
+                                      elem.error      == ErrorStatus.Correct)
+                    .length
+                    .toDouble();
+}
+
+double getS2C2(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliTwo && 
+                                      elem.comparison == ComparisonStimuli.ComparisonTwo &&
+                                      elem.error      == ErrorStatus.Correct)
+                    .length
+                    .toDouble();
+}
+
+/* Conditional Errors */
+
+double getS1C1e(List<ResultElement> _latencyList) {
+
+  _latencyList.forEach((elem) {
+    print("Sample: ${elem.sample} Compare ${elem.comparison} Err: ${elem.error}");
+  });
+
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliOne && 
+                                      elem.comparison == ComparisonStimuli.ComparisonOne &&
+                                      elem.error      == ErrorStatus.Incorrect)
+                    .length
+                    .toDouble();
+}
+
+double getS1C2e(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliOne && 
+                                      elem.comparison == ComparisonStimuli.ComparisonTwo &&
+                                      elem.error      == ErrorStatus.Incorrect)
+                    .length
+                    .toDouble();
+}
+
+double getS2C1e(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliTwo && 
+                                      elem.comparison == ComparisonStimuli.ComparisonOne &&
+                                      elem.error      == ErrorStatus.Incorrect)
+                    .length
+                    .toDouble();
+}
+
+double getS2C2e(List<ResultElement> _latencyList) {
+  return _latencyList.where((elem) => elem.sample     == SampleStimuli.StimuliTwo && 
+                                      elem.comparison == ComparisonStimuli.ComparisonTwo &&
+                                      elem.error      == ErrorStatus.Incorrect)
+                    .length
+                    .toDouble();
 }
