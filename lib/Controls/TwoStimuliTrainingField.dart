@@ -152,7 +152,7 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
           sample: (trialList[currentTrial - 1].currentColor == Colors.blue) ? SampleStimuli.StimuliOne : SampleStimuli.StimuliTwo,
           comparison: isComparisonOnLeft ? ComparisonStimuli.ComparisonOne : ComparisonStimuli.ComparisonTwo,
           error: output ? ErrorStatus.Correct : ErrorStatus.Incorrect,
-          seconds: post.difference(pre).inSeconds,
+          seconds: post.difference(pre).inMilliseconds,
         )
       );
 
