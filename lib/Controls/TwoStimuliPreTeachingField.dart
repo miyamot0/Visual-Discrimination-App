@@ -168,8 +168,8 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
     } else {
       // Bump to end
       var currentTrialElement = trialList[currentTrial - 1];
+      trialList.remove(currentTrialElement);
       trialList.add(currentTrialElement);
-      trialList.removeAt(currentTrial - 1);
 
       // Good to proceed
       await Future.delayed(Duration(seconds: (output) ? (2 + widget.itiSeconds) : widget.itiSeconds)).then((asdf) async {
