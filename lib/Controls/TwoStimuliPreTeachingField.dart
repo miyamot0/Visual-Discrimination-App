@@ -222,7 +222,6 @@ class TwoStimuliPreTeachingFieldState extends State<TwoStimuliPreTeachingField> 
       colorCorrect   = trialList[currentTrial - 1].currentColor;
       colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
     } else {
-      print("in catch");
       colorCorrect = Colors.black;
       colorIncorrect = Colors.black;
     }

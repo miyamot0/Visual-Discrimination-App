@@ -250,11 +250,14 @@ class TwoStimuliTrainingFieldState extends State<TwoStimuliTrainingField> with S
     }
 
     // Hacky workaround
-    if (currentTrial < widget.trialNumber) {
+    if (currentTrial <= widget.trialNumber) {
       colorCorrect   = trialList[currentTrial - 1].currentColor;
       colorIncorrect = (trialList[currentTrial - 1].currentColor == color1) ? color2 : color1;
 
       colorLerp = Color.lerp(colorCorrect, colorIncorrect, widget.discriminabilityDifficulty / 50.0);
+    } else {
+      colorCorrect = Colors.black;
+      colorIncorrect = Colors.black;
     }
 
     return WillPopScope(
